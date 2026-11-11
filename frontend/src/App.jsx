@@ -1,44 +1,43 @@
-import { Link, Route, Routes } from 'react-router-dom'
-import { LogOut } from 'lucide-react'
-import { AuthProvider, useAuth } from './auth/AuthContext.jsx'
+import { Navigate, Route, Routes } from 'react-router-dom'
+import { AuthProvider } from './auth/AuthContext.jsx'
 import RotaProtegida from './auth/RotaProtegida.jsx'
 import Login from './auth/Login.jsx'
 import TrocarSenha from './auth/TrocarSenha.jsx'
+import Layout from './layout/Layout.jsx'
 import Funcionarios from './funcionarios/Funcionarios.jsx'
+import Configuracoes from './configuracoes/Configuracoes.jsx'
+import EmBreve from './paginas/EmBreve.jsx'
+import { Atalhos, Manual, Sobre } from './paginas/Ajuda.jsx'
+import { GRUPOS } from './menu.js'
+import { IdentidadeProvider } from './identidade/IdentidadeContext.jsx'
+import { ThemeProvider } from './tema/ThemeContext.jsx'
 
-// Estrutura provisória: o Módulo 2 entrega o menu definitivo.
-function Provisorio({ children }) {
-  const { usuario, sair } = useAuth()
-  return (
-    <>
-      <header className="topo">
-        <strong>Oficina</strong>
-        <nav>
-          <Link to="/funcionarios">Funcionários</Link>
-          <Link to="/trocar-senha">Trocar senha</Link>
-        </nav>
-        <button className="botao secundario" onClick={sair}>
-          <LogOut size={18} strokeWidth={1.5} aria-hidden="true" /> Sair ({usuario.nome})
-        </button>
-      </header>
-      <main className="conteudo">{children}</main>
-    </>
-  )
-}
+const protegida = (el) => <RotaProtegida><Layout>{el}</Layout></RotaProtegida>
 
-const protegida = (el) => (
-  <RotaProtegida><Provisorio>{el}</Provisorio></RotaProtegida>
-)
+// Telas ainda não implementadas aparecem como "Em breve" até o módulo delas.
+const emBreve = GRUPOS.flatMap((g) => g.itens).filter((i) => !i.pronto)
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Routes>
-        <Route path="/entrar" element={<Login />} />
-        <Route path="/funcionarios" element={protegida(<Funcionarios />)} />
-        <Route path="/trocar-senha" element={protegida(<TrocarSenha />)} />
-        <Route path="*" element={protegida(<p className="estado">Sistema em construção.</p>)} />
-      </Routes>
-    </AuthProvider>
+    <ThemeProvider>
+      <IdentidadeProvider>
+        <AuthProvider>
+          <Routes>
+            <Route path="/entrar" element={<Login />} />
+            <Route path="/" element={protegida(<EmBreve titulo="Hoje" />)} />
+            <Route path="/funcionarios" element={protegida(<Funcionarios />)} />
+            <Route path="/trocar-senha" element={protegida(<TrocarSenha />)} />
+            <Route path="/configuracoes" element={protegida(<Configuracoes />)} />
+            <Route path="/ajuda/manual" element={protegida(<Manual />)} />
+            <Route path="/ajuda/atalhos" element={protegida(<Atalhos />)} />
+            <Route path="/ajuda/sobre" element={protegida(<Sobre />)} />
+            {emBreve.map((i) => (
+              <Route key={i.rota} path={i.rota} element={protegida(<EmBreve titulo={i.nome} />)} />
+            ))}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </AuthProvider>
+      </IdentidadeProvider>
+    </ThemeProvider>
   )
 }

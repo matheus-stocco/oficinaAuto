@@ -17,7 +17,8 @@ cd frontend && npm install && npm run dev   # http://localhost:5173 (proxy /api 
 ## Testes
 
 ```bash
-# os testes de integração usam um banco de teste (DB_URL, DB_USER, DB_PASSWORD)
+# os testes de integração exigem um banco de teste DEDICADO e vazio (DB_URL, DB_USER, DB_PASSWORD);
+# não use o mesmo banco do desenvolvimento, senão os dados dele interferem nos testes
 cd backend && ./mvnw test -Dtest='com.oficina.<modulo>.*Test'
 cd frontend && npx vitest run src/<modulo>
 ```

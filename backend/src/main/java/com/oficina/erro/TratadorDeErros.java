@@ -2,7 +2,9 @@ package com.oficina.erro;
 
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -19,5 +21,10 @@ public class TratadorDeErros {
         String msg = e.getBindingResult().getFieldErrors().stream()
                 .map(f -> f.getDefaultMessage()).findFirst().orElse("Dados inválidos.");
         return ResponseEntity.badRequest().body(Map.of("erro", msg));
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    ResponseEntity<Map<String, String>> arquivoGrande(MaxUploadSizeExceededException e) {
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(Map.of("erro", "Arquivo muito grande."));
     }
 }

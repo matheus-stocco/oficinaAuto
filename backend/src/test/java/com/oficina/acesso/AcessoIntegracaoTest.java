@@ -48,7 +48,7 @@ class AcessoIntegracaoTest {
     @Test
     void rotaProtegidaSemLoginDevolve401() throws Exception {
         mvc.perform(get("/api/funcionarios")).andExpect(status().isUnauthorized());
-        mvc.perform(get("/api/auth/eu")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/api/auth/eu")).andExpect(status().isNoContent());
     }
 
     @Test
@@ -101,6 +101,12 @@ class AcessoIntegracaoTest {
                 .andExpect(status().isOk());
         mvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
                 .content(login("ana", "nova-senha-123"))).andExpect(status().isOk());
+    }
+
+    @Test
+    void euComSessaoDevolveOUsuario() throws Exception {
+        mvc.perform(get("/api/auth/eu").cookie(entrar())).andExpect(status().isOk())
+                .andExpect(jsonPath("$.login").value("ana"));
     }
 
     @Test

@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { AuthProvider } from './AuthContext.jsx'
+import { IdentidadeProvider } from '../identidade/IdentidadeContext.jsx'
 import Login from './Login.jsx'
 
 function respostas(mapa) {
@@ -12,7 +13,7 @@ function respostas(mapa) {
 }
 
 function montar() {
-  render(<MemoryRouter><AuthProvider><Login /></AuthProvider></MemoryRouter>)
+  render(<MemoryRouter><IdentidadeProvider><AuthProvider><Login /></AuthProvider></IdentidadeProvider></MemoryRouter>)
 }
 
 test('mostra a mensagem do servidor quando o login falha', async () => {

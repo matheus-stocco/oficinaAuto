@@ -52,9 +52,11 @@ public class AuthController {
                 .header(HttpHeaders.SET_COOKIE, cookie("", Duration.ZERO).toString()).build();
     }
 
+    /** Pública de propósito: sem sessão devolve 204 (e não 401), para a tela de login não gerar erro no console. */
     @GetMapping("/eu")
-    Eu eu(Authentication a) {
-        return Eu.de(funcionarios.buscar((Long) a.getPrincipal()));
+    ResponseEntity<Eu> eu(Authentication a) {
+        if (a == null || !(a.getPrincipal() instanceof Long id)) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(Eu.de(funcionarios.buscar(id)));
     }
 
     @PostMapping("/trocar-senha")

@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
-import { LogIn } from 'lucide-react'
+import { LogIn, Wrench } from 'lucide-react'
 import { useAuth } from './AuthContext.jsx'
+import { useIdentidade } from '../identidade/IdentidadeContext.jsx'
 
 export default function Login() {
   const { usuario, entrar } = useAuth()
+  const { identidade, logoUrl } = useIdentidade()
   const navegar = useNavigate()
   const [login, setLogin] = useState('')
   const [senha, setSenha] = useState('')
@@ -30,6 +32,10 @@ export default function Login() {
   return (
     <main className="centro">
       <form className="cartao form" onSubmit={enviar}>
+        <div className="marca centralizada">
+          {logoUrl ? <img src={logoUrl} alt="" className="logo grande" /> : <Wrench size={32} strokeWidth={1.5} aria-hidden="true" />}
+          <span>{identidade.nome}</span>
+        </div>
         <h1>Entrar</h1>
         <label>
           Usuário
