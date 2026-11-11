@@ -14,4 +14,5 @@
 | 9 Relatórios | PENDENTE | | | |
 | 10 Dashboard "Hoje" | PENDENTE | | | |
 | 11 LGPD, backup e fechamento | PENDENTE | | | |
-| 12 Teste final com Playwright | PENDENTE | | | |
+| 12 Catálogo de modelos (brazilian-cars) | PENDENTE | | | |
+| 13 Teste final com Playwright | PENDENTE | | | |

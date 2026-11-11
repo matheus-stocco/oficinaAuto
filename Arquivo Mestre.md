@@ -107,7 +107,8 @@ erros dele:**
 | Valores da OS | Serviços + Mão de obra + Peças (repasse) + Taxa de compra − Desconto. Ver Módulo 5. |
 | Financeiro online | **Asaas**, atrás da interface `GatewayPagamento`. Maquininha (InfinitePay, PagBank ou Mercado Pago) é decisão futura. |
 | Relatórios | Google Charts + tabela paginada + PDF de cada um. |
-| FIPE e CEP | **Fora desta reconstrução.** Serão decididos ao terminar tudo. Não implemente e não deixe ganchos. |
+| Marca e modelo do veículo | Campos digitados até o Módulo 12. No **Módulo 12** (penúltimo) o autocomplete passa a vir de um **catálogo no próprio banco**, populado a partir do repositório `gpupo/brazilian-cars`. **Sem API externa de FIPE.** |
+| CEP | **Fora desta reconstrução.** Decidido ao terminar tudo. Não implemente e não deixe ganchos. |
 | Plataforma | **Responsivo em qualquer tela**, acessível pelo navegador do celular e do computador. **Sem PWA** (sem instalação nem modo offline). |
 
 Menu lateral (fixo, 4 grupos que expandem), mais o rodapé:
@@ -126,7 +127,7 @@ Menu lateral (fixo, 4 grupos que expandem), mais o rodapé:
 
 Fora de escopo (não implementar; anotar em `docs/ROADMAP.md`): estoque, fornecedores,
 nota fiscal, multi-oficina, app nativo, perfis de permissão, fotos da OS, comissão,
-agenda com alerta/conflito/recorrência, CRM, FIPE, CEP.
+agenda com alerta/conflito/recorrência, CRM, API externa de FIPE, CEP.
 
 ---
 
@@ -229,7 +230,7 @@ relatórios. Não duplique a fórmula.
     anonimização LGPD são **obrigatoriamente testados**, com centavos.
   - Teste que falha não é apagado nem ignorado: corrija o código ou o teste.
 - **Teste final de ponta a ponta (Playwright):** depois de **todos** os módulos concluídos
-  e com os testes de cada um verdes, o Módulo 12 testa o sistema real no navegador.
+  e com os testes de cada um verdes, o Módulo 13 testa o sistema real no navegador.
 - **Git:** um commit por módulo (ou por entrega fechada dentro dele), mensagem em
   português, sem `.env`, `node_modules`, `target`.
 
@@ -313,7 +314,7 @@ o módulo quebrado no ambiente online. Ao concluir, siga a seção 8.
 - Configurar a base de testes: JUnit no backend e **Vitest** no frontend, cada um com
   um teste de exemplo passando.
 - README real (o que é, como subir, como é o deploy).
-- Criar `docs/ROTEIRO-MODULOS.md` com os módulos 0 a 12 como `PENDENTE`, e
+- Criar `docs/ROTEIRO-MODULOS.md` com os módulos 0 a 13 como `PENDENTE`, e
   `docs/ROADMAP.md`. Registrar a estrutura inicial no Graphify.
 
 **Aceite:** `git ls-files` sem nenhum `node_modules`, `target` ou `.env`; backend e
@@ -459,8 +460,31 @@ criados); teste de cada cartão contra dados de exemplo.
 **Aceite:** restaurar um backup devolve todos os dados; `lgpd-check` sem pendência
 crítica; uma VPS nova fica no ar seguindo só `docs/instalacao.md`.
 
-### Módulo 12 — Teste final com Playwright
-Só começa com os Módulos 0 a 11 `CONCLUÍDO`, cada um com os testes dele verdes.
+### Módulo 12 — Catálogo de modelos de veículos (brazilian-cars)
+Só depois dos módulos de negócio. Troca o texto livre de marca, modelo e ano do veículo por
+**autocomplete vindo do próprio banco**, sem chamar nenhuma API externa.
+**Entrega:**
+- Tabela `catalogo_veiculo` (marca, modelo, versão como "1992 Gasolina"), com índice único
+  em (marca, modelo, versão) e índices de busca. **Nenhum dado pessoal** nela.
+- **Importação única e idempotente** a partir de `gpupo/brazilian-cars`
+  (`Resources/data/current/cars.yaml`, licença **MIT**): o agente baixa o arquivo uma vez,
+  filtra o tipo `Car` e converte para um CSV compacto (`marca;modelo;versao`) em
+  `backend/src/main/resources/catalogo/`. Na subida, se a tabela estiver vazia, o backend
+  carrega o CSV em lote. Rodar duas vezes não duplica. Nada é baixado em tempo de execução.
+- **Licença:** manter o aviso de copyright e a licença MIT do repositório de origem em
+  `docs/licencas.md` e junto do CSV.
+- Rotas autenticadas, paginadas e com limite (20): marcas, modelos de uma marca com filtro
+  `q`, e versões de um modelo.
+- **Tela de veículo:** marca, modelo e ano viram campos com sugestões do catálogo, em
+  cadeia (marca, depois modelo, depois versão), **sempre aceitando texto livre**. Ao salvar
+  um veículo com marca e modelo que não estão no catálogo, ele entra no catálogo, e assim
+  o catálogo cresce com o que a oficina cadastra (carros novos que a fonte não tem).
+**Aceite:** importação roda duas vezes sem duplicar; sugestão responde em menos de 200 ms;
+veículo com modelo novo digitado passa a aparecer nas sugestões; testes unitários e de
+integração do módulo passando; `docs/licencas.md` existe.
+
+### Módulo 13 — Teste final com Playwright
+Só começa com os Módulos 0 a 12 `CONCLUÍDO`, cada um com os testes dele verdes.
 **Entrega:** testes de ponta a ponta no **Playwright já instalado** no ambiente. Não
 reinstale o Playwright nem o navegador. Rode contra a aplicação **online no Dokploy**
 (ou, se não houver acesso, local com backend e frontend rodando), com dados de exemplo.

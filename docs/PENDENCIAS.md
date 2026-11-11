@@ -5,7 +5,8 @@ Atualizar ao final de cada módulo (regra 4 do Arquivo Mestre). Marcar `[x]` qua
 ## Gerais (valem para o projeto todo)
 - [ ] Deploy no Dokploy (Railpack): configurar conforme `docs/dokploy.md` e confirmar `/api/saude` no domínio.
 - [ ] Graphify: autorizar o conector e registrar a estrutura dos módulos já feitos (0, 1, 2, 3...).
-- [ ] FIPE (marcas, modelos e anos de carros) e CEP (autopreenchimento): decididos para o fim do projeto. Em 2026-11-11 foi testada a API apifipe.com.br: a chave é aceita, mas a conta respondeu 402 (sem assinatura ativa), então o formato de modelos e anos nunca foi confirmado. A integração foi **removida do código** e a chave nunca foi gravada no repositório. Antes de retomar: ativar um plano, e guardar a chave só em variável de ambiente.
+- [ ] CEP (autopreenchimento de endereço): decidido para o fim do projeto; ainda sem fonte definida.
+- [ ] Catálogo de modelos: ver Módulo 12.
 - [ ] Confirmar no primeiro deploy: versões de Java e Node do Railpack e fallback de rotas do frontend (react-router).
 
 ## Módulo 0 — Base do projeto
@@ -25,3 +26,8 @@ Atualizar ao final de cada módulo (regra 4 do Arquivo Mestre). Marcar `[x]` qua
 - [ ] Endereço do cliente é um único campo de texto; separar em CEP, cidade e UF só quando o CEP for integrado.
 - [ ] Não existe exclusão de cliente, só anonimização (LGPD, mantém a contabilidade). Conferir com o dono se precisa de exclusão física.
 - [ ] Anonimizar não cobre dados pessoais digitados em campos livres de OS futuras (observações): tratar no Módulo 5.
+
+## Módulo 12 — Catálogo de modelos de veículos (planejado)
+- [ ] Fonte: `gpupo/brazilian-cars` (`Resources/data/current/cars.yaml`, ~5,7 mil linhas de modelos; marca, modelo e versões como "1992 Gasolina"; licença MIT, manter o aviso). O repositório foi atualizado pela última vez em 2024-05, então carros mais novos não estão nele: por isso a tela aceita texto livre e o catálogo aprende com o que a oficina cadastra.
+- [ ] Os dados vêm originalmente da tabela FIPE. A licença MIT é do repositório, não garante o direito sobre a origem: confirmar o uso comercial antes de vender.
+- [ ] A API apifipe.com.br foi descartada (conta sem assinatura, resposta 402); a chave dela nunca entrou no repositório.
