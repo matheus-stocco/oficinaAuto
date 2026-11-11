@@ -1,5 +1,6 @@
 package com.oficina.orcamentos;
 
+import com.oficina.ordens.CadastrosNaHora;
 import com.oficina.ordens.OsDto;
 import com.oficina.veiculos.Placa;
 import jakarta.validation.Valid;
@@ -60,7 +61,7 @@ public class OrcamentoController {
     }
 
     @PostMapping("/{id}/criar-os")
-    OsDto criarOs(@PathVariable Long id, @Valid @RequestBody(required = false) ConversaoForm conversao) {
+    OsDto criarOs(@PathVariable Long id, @Valid @RequestBody(required = false) CadastrosNaHora conversao) {
         return service.criarOs(id, conversao);
     }
 }

@@ -1,15 +1,13 @@
 package com.oficina.orcamentos;
 
-import com.oficina.clientes.Cliente;
-import com.oficina.clientes.ClienteForm;
 import com.oficina.clientes.ClienteService;
 import com.oficina.empresa.EmpresaService;
 import com.oficina.erro.NegocioException;
+import com.oficina.ordens.CadastrosNaHora;
+import com.oficina.ordens.CadastrosNaHoraService;
 import com.oficina.ordens.OrdemServicoService;
 import com.oficina.ordens.OsDto;
 import com.oficina.ordens.OsForm;
-import com.oficina.veiculos.Veiculo;
-import com.oficina.veiculos.VeiculoForm;
 import com.oficina.veiculos.VeiculoService;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -29,15 +27,18 @@ public class OrcamentoService {
     private final com.oficina.servicos.ServicoService servicos;
     private final OrdemServicoService ordens;
     private final EmpresaService empresa;
+    private final CadastrosNaHoraService cadastros;
 
     public OrcamentoService(OrcamentoRepository repo, ClienteService clientes, VeiculoService veiculos,
-                            com.oficina.servicos.ServicoService servicos, OrdemServicoService ordens, EmpresaService empresa) {
+                            com.oficina.servicos.ServicoService servicos, OrdemServicoService ordens, EmpresaService empresa,
+                            CadastrosNaHoraService cadastros) {
         this.repo = repo;
         this.clientes = clientes;
         this.veiculos = veiculos;
         this.servicos = servicos;
         this.ordens = ordens;
         this.empresa = empresa;
+        this.cadastros = cadastros;
     }
 
     int horas() {
@@ -92,17 +93,11 @@ public class OrcamentoService {
      * falhar (por exemplo, placa repetida ao cadastrar o veículo), nada muda e o orçamento continua lá.
      */
     @Transactional
-    public OsDto criarOs(Long id, ConversaoForm conversao) {
+    public OsDto criarOs(Long id, CadastrosNaHora novos) {
         Orcamento o = buscar(id);
-        Cliente cliente = o.getCliente();
-        if (cliente == null && conversao != null && conversao.cliente() != null) {
-            cliente = clientes.criar(new ClienteForm(conversao.cliente().nome(), conversao.cliente().telefone(), null, null, null, null));
-        }
-        Veiculo veiculo = o.getVeiculo();
-        if (veiculo == null && conversao != null && conversao.veiculo() != null) {
-            veiculo = veiculos.criar(new VeiculoForm(conversao.veiculo().placa(), null, conversao.veiculo().modelo(), null, null,
-                    cliente == null ? null : cliente.getId()));
-        }
+        var r = cadastros.resolver(o.getCliente(), o.getVeiculo(), novos);
+        var cliente = r.cliente();
+        var veiculo = r.veiculo();
         OsDto os = ordens.criar(new OsForm(
                 cliente == null ? null : cliente.getId(), veiculo == null ? null : veiculo.getId(), null, null, null,
                 o.getObservacoes(), null,
