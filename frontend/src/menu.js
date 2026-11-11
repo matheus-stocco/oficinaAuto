@@ -4,8 +4,8 @@ import { ArrowLeftRight, BookOpen, ChartColumn, Users } from 'lucide-react'
 export const GRUPOS = [
   {
     nome: 'Cadastros', icone: Users, itens: [
-      { nome: 'Clientes', rota: '/clientes' },
-      { nome: 'Veículos', rota: '/veiculos' },
+      { nome: 'Clientes', rota: '/clientes', pronto: true },
+      { nome: 'Veículos', rota: '/veiculos', pronto: true },
       { nome: 'Funcionários', rota: '/funcionarios', pronto: true },
       { nome: 'Serviços', rota: '/servicos' },
     ],

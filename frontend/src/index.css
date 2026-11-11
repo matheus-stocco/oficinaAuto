@@ -95,3 +95,8 @@ legend { color: var(--cor-suave); font-size: 0.85rem; padding: 0 0.4rem; }
   .conteudo { padding: 0.75rem; }
   .painel { padding: 1rem; border-radius: 12px; }
 }
+.botao.cheio { width: 100%; justify-content: flex-start; }
+.link { justify-self: start; min-height: 44px; padding: 0; border: 0; background: none; color: var(--cor-suave); font: inherit; text-decoration: underline; cursor: pointer; }
+.aviso { display: grid; gap: 0.75rem; padding: 0.75rem; border: 1px solid var(--cor-erro); border-radius: 8px; }
+.aviso p { margin: 0; }
+.seletor { display: grid; gap: 0.5rem; }
