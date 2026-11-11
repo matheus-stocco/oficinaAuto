@@ -428,6 +428,10 @@ API do calendário recusa períodos acima de 62 dias; no celular não existe a v
   estiver configurada. O Asaas exige nome e CPF/CNPJ do cliente: se faltar, peça na hora.
 - **Webhook** `POST /api/webhooks/asaas`: valida o token (variável de ambiente), é
   **idempotente** pelo `id_externo` e dá baixa automática no pagamento.
+**Decisões já tomadas:** boleto passa a ser forma de pagamento (só chega pelo Asaas); a cobrança online
+exige cliente cadastrado com CPF/CNPJ; o webhook usa o cabeçalho `asaas-access-token`, recusa tudo se não houver
+token configurado e responde 200 a eventos que não interessam (o Asaas pausa a fila após 15 falhas); a URL padrão do
+Asaas é a do sandbox. Detalhes e passo a passo em `docs/asaas.md`.
 **Aceite:** soma do caixa do dia bate com os pagamentos do dia; webhook com token errado
 devolve 401; o mesmo evento duas vezes registra um pagamento só; sem a chave do Asaas o
 sistema funciona e o botão não aparece.

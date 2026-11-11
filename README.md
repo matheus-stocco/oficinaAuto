@@ -26,3 +26,4 @@ cd frontend && npx vitest run src/<modulo>
 ## Deploy
 
 Automático pelo Dokploy (Railpack), sem Docker. Veja [`docs/dokploy.md`](docs/dokploy.md).
+Cobrança online com o Asaas (opcional): [`docs/asaas.md`](docs/asaas.md).

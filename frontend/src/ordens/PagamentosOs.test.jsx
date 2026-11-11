@@ -8,6 +8,7 @@ const RESUMO = (extra = {}) => ({
 function montar(resumo, status = 'PRONTA', respostasPost = {}) {
   globalThis.fetch = vi.fn((url, op) => {
     const m = op?.method || 'GET'
+    if (m === 'GET' && url.endsWith('/cobrancas')) return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ online: false, cobrancas: [] }) })
     if (m === 'GET') return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(resumo) })
     const r = respostasPost[url] ?? { corpo: resumo }
     return Promise.resolve({ ok: !r.erro, status: r.erro ? 400 : 200, json: () => Promise.resolve(r.erro ? { erro: r.erro } : r.corpo) })
@@ -124,4 +125,31 @@ test('OS pronta com saldo avisa o que falta para entregar', async () => {
 test('pagamentos acima do total avisam e pedem estorno', async () => {
   montar(RESUMO({ pago: 100, saldo: -50 }))
   expect(await screen.findByText(/passam do total da OS em R\$\s50,00/)).toBeTruthy()
+})
+
+test('o boleto pago pelo Asaas aparece com o nome da forma', async () => {
+  montar(RESUMO({ pago: 100, saldo: 0, pagamentos: [{ id: 5, valor: 100, forma: 'BOLETO', data: '2026-11-10', origem: 'ASAAS', estornado: false }] }))
+  expect(await screen.findByText(/R\$\s100,00 · Boleto · 10\/11\/2026 · Asaas/)).toBeTruthy()
+})
+
+test('o formulário manual não oferece boleto', async () => {
+  montar(RESUMO())
+  const form = within(await screen.findByLabelText('Registrar pagamento'))
+  expect(form.getAllByRole('option').map((o) => o.textContent)).toEqual(['Dinheiro', 'Pix', 'Cartão'])
+})
+
+test('Atualizar recarrega o pagamento (um pagamento pode ter chegado pelo Asaas)', async () => {
+  montar(RESUMO())
+  await screen.findByLabelText('Situação do pagamento')
+  const antes = fetch.mock.calls.filter(([u]) => u === '/api/ordens/7/financeiro').length
+  fireEvent.click(screen.getByRole('button', { name: 'Atualizar' }))
+  await waitFor(() => expect(fetch.mock.calls.filter(([u]) => u === '/api/ordens/7/financeiro').length).toBe(antes + 1))
+})
+
+test('voltar para a aba também recarrega', async () => {
+  montar(RESUMO())
+  await screen.findByLabelText('Situação do pagamento')
+  const antes = fetch.mock.calls.filter(([u]) => u === '/api/ordens/7/financeiro').length
+  window.dispatchEvent(new Event('focus'))
+  await waitFor(() => expect(fetch.mock.calls.filter(([u]) => u === '/api/ordens/7/financeiro').length).toBe(antes + 1))
 })

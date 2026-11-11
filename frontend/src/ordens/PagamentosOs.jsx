@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { api } from '../api.js'
 import { formatarMoeda, lerMoeda } from '../moeda.js'
 import { iso, somarDias } from '../agenda/datas.js'
-import { dataBr, FORMAS } from '../financeiro/rotulos.js'
+import { dataBr, FORMAS, FORMAS_MANUAIS } from '../financeiro/rotulos.js'
+import CobrancasOnline from './CobrancasOnline.jsx'
 
 /**
  * Pagamentos, fiado e saldo da OS. Recarrega quando `chave` muda (a OS foi salva ou mudou de situação).
@@ -17,9 +18,15 @@ export default function PagamentosOs({ osId, status, chave }) {
   const [vencimento, setVencimento] = useState(() => iso(somarDias(new Date(), 7)))
   const [erro, setErro] = useState('')
   const [estornando, setEstornando] = useState(null)
+  const [versao, setVersao] = useState(0) // sobe ao voltar para a aba ou ao clicar em Atualizar (um pagamento pode ter chegado pelo Asaas)
 
   const carregar = () => api(`/ordens/${osId}/financeiro`).then((x) => { setR(x); setErro('') }).catch((e) => setErro(e.message))
-  useEffect(() => { carregar() }, [osId, chave])
+  useEffect(() => { carregar() }, [osId, chave, versao])
+  useEffect(() => {
+    const aoVoltar = () => setVersao((v) => v + 1)
+    window.addEventListener('focus', aoVoltar)
+    return () => window.removeEventListener('focus', aoVoltar)
+  }, [])
 
   async function enviar(caminho, corpo, limpar) {
     setErro('')
@@ -53,6 +60,7 @@ export default function PagamentosOs({ osId, status, chave }) {
   return (
     <fieldset aria-label="Pagamento">
       <legend>Pagamento</legend>
+      <button type="button" className="botao secundario" onClick={() => setVersao((v) => v + 1)}>Atualizar</button>
       <div className="resumo" aria-label="Situação do pagamento">
         <div className="cartao"><span className="suave">Total</span><strong>{formatarMoeda(r.total)}</strong></div>
         <div className="cartao"><span className="suave">Pago</span><strong>{formatarMoeda(r.pago)}</strong></div>
@@ -94,20 +102,21 @@ export default function PagamentosOs({ osId, status, chave }) {
       )}
 
       {erro && <p role="alert" className="erro">{erro}</p>}
+      <CobrancasOnline osId={osId} status={status} chave={`${chave}|${versao}|${r.pago}`} />
       {aberta && temSaldo && (
         <>
-          <div className="form" role="group" aria-label="Registrar pagamento">
+          <div className="form cheio-largura" role="group" aria-label="Registrar pagamento">
             <h3 className="subtitulo">Registrar pagamento</h3>
             <div className="grade tres">
               <label>Valor (R$)<input inputMode="decimal" placeholder={String(r.saldo).replace('.', ',')} value={valor} onChange={(e) => setValor(e.target.value)} /></label>
               <label>Forma
-                <select value={forma} onChange={(e) => setForma(e.target.value)}>{Object.entries(FORMAS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select>
+                <select value={forma} onChange={(e) => setForma(e.target.value)}>{Object.entries(FORMAS_MANUAIS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select>
               </label>
               <label>Dia<input type="date" max={iso(new Date())} value={data} onChange={(e) => setData(e.target.value)} /></label>
             </div>
             <button type="button" className="botao" onClick={pagar}>Registrar pagamento</button>
           </div>
-          <div className="form" role="group" aria-label="Fiar o saldo">
+          <div className="form cheio-largura" role="group" aria-label="Fiar o saldo">
             <h3 className="subtitulo">Fiar (cliente paga depois)</h3>
             <div className="grade">
               <label>Valor (R$)<input inputMode="decimal" placeholder={String(r.saldo).replace('.', ',')} value={fiadoValor} onChange={(e) => setFiadoValor(e.target.value)} /></label>

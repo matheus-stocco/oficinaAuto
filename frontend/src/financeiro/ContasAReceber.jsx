@@ -6,7 +6,7 @@ import Busca from '../componentes/Busca.jsx'
 import Paginacao from '../componentes/Paginacao.jsx'
 import { useListaPaginada } from '../componentes/useListaPaginada.js'
 import { iso } from '../agenda/datas.js'
-import { dataBr, FORMAS } from './rotulos.js'
+import { dataBr, FORMAS_MANUAIS } from './rotulos.js'
 
 const SITUACOES = { ABERTO: 'Em aberto', PAGO: 'Pagos', CANCELADO: 'Cancelados', '': 'Todos' }
 
@@ -74,7 +74,7 @@ export default function ContasAReceber() {
                     <div className="aviso">
                       <div className="grade">
                         <label>Forma
-                          <select value={forma} onChange={(e) => setForma(e.target.value)}>{Object.entries(FORMAS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select>
+                          <select value={forma} onChange={(e) => setForma(e.target.value)}>{Object.entries(FORMAS_MANUAIS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select>
                         </label>
                         <label>Dia do recebimento<input type="date" max={iso(new Date())} value={data} onChange={(e) => setData(e.target.value)} /></label>
                       </div>

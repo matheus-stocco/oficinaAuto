@@ -20,3 +20,9 @@ Pontos a confirmar no primeiro deploy (dependem da versão do Railpack):
 - o Railpack usa Java 17 (arquivo `backend/.java-version`) e Node 22 (`frontend/.node-version`);
 - o front publicado serve `index.html` em qualquer rota (necessário para o react-router).
 Se algum falhar, ajuste e registre em `docs/DECISOES.md`.
+
+## Cobrança online com o Asaas (opcional)
+
+No backend, acrescente as variáveis `ASAAS_API_KEY`, `ASAAS_URL` e `ASAAS_WEBHOOK_TOKEN` e crie o webhook no painel do
+Asaas apontando para `https://<domínio>/api/webhooks/asaas`. Passo a passo e cuidados em [`asaas.md`](asaas.md).
+Sem essas variáveis o sistema funciona normalmente, sem cobrança online.

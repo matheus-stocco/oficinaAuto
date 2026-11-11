@@ -63,7 +63,17 @@ Atualizar ao final de cada módulo (regra 4 do Arquivo Mestre). Marcar `[x]` qua
 - [ ] Os testes do calendário no frontend congelam a data (relógio falso); se o fuso da máquina de testes mudar, conferir.
 
 ## Módulo 8 — Financeiro (parte A feita; parte B, Asaas, pendente)
-- [ ] Parte B inteira: `GatewayPagamento`, implementação do Asaas, botão "Gerar cobrança" (só com chave configurada) e webhook com token e idempotência. Precisa de uma chave de sandbox do Asaas para testar de verdade; sem ela, só testes com respostas simuladas.
+- [ ] **Asaas nunca foi chamado de verdade.** Os campos vêm da documentação oficial (lida em 2026-11-11) e foram testados com respostas simuladas e com um Asaas de mentira local. Antes de vender: criar conta e chave de **sandbox**, configurar o webhook e rodar o passo a passo de `docs/asaas.md` (gerar cobrança, pagar com Pix de teste, ver o pagamento entrar). Se a documentação divergir da API real, o ajuste é só em `AsaasGateway`.
+- [ ] O Asaas **notifica o cliente por e-mail/SMS por padrão** (o sistema não envia `notificationDisabled`) e recebe o e-mail do cliente se ele existir. Decidir com o dono se isso é desejado ou se desliga as notificações do Asaas.
+- [ ] O cliente criado no Asaas guarda nome, CPF/CNPJ e e-mail **fora** do sistema: anonimizar aqui não apaga lá. Entra na política de privacidade como operador (Módulo 11) e a exclusão no Asaas é manual, pelo painel.
+- [ ] Sem reconciliação: se um webhook não chegar (a fila do Asaas pausa após 15 falhas e descarta eventos com mais de 14 dias), a cobrança paga continua "pendente" aqui. `GatewayPagamento.consultar` existe mas ainda não é usado; "Atualizar" só relê o nosso banco.
+- [ ] Cobrança pendente vencida continua reservando saldo da OS até ser cancelada à mão (não há rotina que consulte o status).
+- [ ] Estorno parcial, chargeback e disputa (`PAYMENT_PARTIALLY_REFUNDED`, `PAYMENT_CHARGEBACK_*`) são ignorados com 200: o dono acompanha no painel do Asaas. Só o estorno total (`PAYMENT_REFUNDED`) muda o caixa.
+- [ ] A taxa do Asaas (`netValue`) não é descontada: o caixa mostra o valor cobrado. Juros e multa de boleto vencido também não entram.
+- [ ] O webhook grava e responde na mesma requisição (a documentação recomenda enfileirar); aceitável pelo tamanho do processamento.
+- [ ] A URL padrão é a do **sandbox**: esquecer de trocar `ASAAS_URL` em produção gera cobranças sem valor real. O sistema só avisa no log quando o prefixo da chave (`$aact_prod_` ou `$aact_hmlg_`) não combina com a URL.
+- [ ] A chave do Asaas contém `$`; no Dokploy, usar aspas simples (anotado em `docs/asaas.md`).
+- [ ] Cobrar e também registrar pagamento manual do mesmo valor pode quitar a OS duas vezes: o sistema impede cobrar além do saldo, mas um pagamento manual feito depois da cobrança pode passar do total (a OS mostra o saldo negativo e pede estorno).
 - [ ] Editar o valor da OS depois de receber é permitido (a OS mostra o saldo negativo ou o que falta); a entrega fica bloqueada até acertar. Não há bloqueio de edição de itens quando há pagamento.
 - [ ] Estorno é do registro do sistema: devolver o dinheiro ao cliente (Pix, cartão) é feito fora e não é conferido aqui.
 - [ ] Fiado não tem juros, multa nem parcelamento: um fiado é um valor com um vencimento. Parcelas = vários fiados.
