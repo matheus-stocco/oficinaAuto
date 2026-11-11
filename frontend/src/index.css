@@ -102,3 +102,21 @@ legend { color: var(--cor-suave); font-size: 0.85rem; padding: 0 0.4rem; }
 .seletor { display: grid; gap: 0.5rem; }
 .marcar { display: flex; align-items: center; gap: 0.6rem; min-height: 44px; margin-bottom: 0.75rem; color: var(--cor-suave); }
 .marcar input { width: 22px; height: 22px; min-height: 0; padding: 0; }
+.selo { display: inline-block; margin-left: 0.4rem; padding: 0.1rem 0.55rem; border: 1px solid var(--cor-borda); border-radius: 999px;
+        font-size: 0.75rem; font-weight: 500; color: var(--cor-suave); vertical-align: middle; }
+.filtros { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; margin-bottom: 1rem; }
+.grade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.grade.tres { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; }
+.duplo { display: grid; grid-template-columns: 5rem minmax(0, 1fr); gap: 0.5rem; }
+.item { display: grid; gap: 0.75rem; padding: 0.75rem; border: 1px solid var(--cor-borda); border-radius: 8px; }
+.subtotal { display: grid; gap: 0.2rem; min-height: 44px; align-content: center; }
+.totais { display: grid; gap: 0.4rem; padding: 1rem; border: 1px solid var(--cor-borda); border-radius: 8px; }
+.totais div { display: flex; justify-content: space-between; gap: 1rem; }
+.totais .forte { font-size: 1.15rem; font-weight: 600; }
+.form.pagina { max-width: 48rem; }
+@media (max-width: 700px) {
+  .filtros, .grade, .grade.tres { grid-template-columns: 1fr; }
+}
+.com-acao { display: flex; gap: 0.5rem; align-items: flex-end; }
+.com-acao label { flex: 1; min-width: 0; }
+.com-acao .botao { text-decoration: none; flex: none; }

@@ -32,7 +32,7 @@ export default function SeletorCliente({ valor, aoEscolher }) {
         <ul className="lista" aria-label="Clientes encontrados">
           {achados.map((c) => (
             <li key={c.id}>
-              <button type="button" className="botao secundario cheio" onClick={() => { aoEscolher({ id: c.id, nome: c.nome }); setTexto('') }}>
+              <button type="button" className="botao secundario cheio" onClick={() => { aoEscolher({ id: c.id, nome: c.nome, telefone: c.telefone }); setTexto('') }}>
                 {c.nome} · {c.telefone}
               </button>
             </li>

@@ -350,6 +350,9 @@ passando.
 paginação; cliente só com nome e telefone obrigatórios; veículo com cliente opcional;
 ficha do veículo com o histórico de OS (lista paginada); **Exportar** e **Anonimizar**
 cliente (seção 7).
+**Botão WhatsApp** ao lado do telefone na ficha do cliente: link `wa.me` que abre o WhatsApp
+Web (computador) ou o app (celular) na conversa dele, sem texto pronto e sem API. Some se o
+telefone não for válido ou se o cliente foi anonimizado.
 **Aceite:** placa duplicada é recusada (formato antigo e Mercosul); busca por telefone
 ignora a máscara; anonimizar mantém as OS e remove os dados pessoais; testes da busca e
 da anonimização.
@@ -372,7 +375,6 @@ continua nos já criados.
 - Lista paginada com filtros (status, período, texto) e tela única de edição.
 - **PDF da OS** com o cabeçalho padrão, três blocos (serviços, mão de obra, peças e
   taxa) e o total.
-- Aviso por WhatsApp (`wa.me`, texto pronto) quando houver telefone.
 - Auditoria de quem mudou o status e quando.
 **Aceite:** `CalculoValores` testado com centavos e com os dois tipos (valor e %) de taxa
 e desconto; desconto acima do permitido é recusado; OS `ENTREGUE` fica imutável (reabrir

@@ -51,3 +51,23 @@ test('cliente anonimizado não pode ser editado', async () => {
   expect(screen.queryByRole('button', { name: /Salvar/ })).toBeNull()
   expect(screen.queryByRole('button', { name: /Anonimizar/ })).toBeNull()
 })
+
+test('botão do WhatsApp abre a conversa do telefone digitado, em nova aba e com proteção', async () => {
+  responder({ 'GET /api/clientes/5/veiculos': { corpo: [] } })
+  render(<ClienteForm inicial={{ id: 5, nome: 'Maria', telefone: '(11) 98888-7777' }} aoSalvar={() => {}} aoCancelar={() => {}} />)
+  const link = screen.getByRole('link', { name: 'Abrir conversa no WhatsApp' })
+  expect(link.getAttribute('href')).toBe('https://wa.me/5511988887777')
+  expect(link.getAttribute('target')).toBe('_blank')
+  expect(link.getAttribute('rel')).toContain('noopener')
+  fireEvent.change(screen.getByLabelText('Telefone'), { target: { value: '(21) 97777-1111' } })
+  expect(screen.getByRole('link', { name: 'Abrir conversa no WhatsApp' }).getAttribute('href')).toBe('https://wa.me/5521977771111')
+})
+
+test('sem telefone válido ou com cliente anonimizado, não há botão do WhatsApp', async () => {
+  responder({ 'GET /api/clientes/5/veiculos': { corpo: [] } })
+  const { unmount } = render(<ClienteForm inicial={{ id: 5, nome: 'Maria', telefone: '123' }} aoSalvar={() => {}} aoCancelar={() => {}} />)
+  expect(screen.queryByRole('link', { name: /WhatsApp/ })).toBeNull()
+  unmount()
+  render(<ClienteForm inicial={{ id: 6, nome: 'Anon', telefone: '(11) 98888-7777', anonimizado: true }} aoSalvar={() => {}} aoCancelar={() => {}} />)
+  expect(screen.queryByRole('link', { name: /WhatsApp/ })).toBeNull()
+})

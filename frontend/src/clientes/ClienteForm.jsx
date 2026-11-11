@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Download, EyeOff, Save } from 'lucide-react'
+import { Download, EyeOff, MessageCircle, Save } from 'lucide-react'
 import { api } from '../api.js'
+import { linkWhatsapp } from '../whatsapp.js'
 
 export default function ClienteForm({ inicial, aoSalvar, aoCancelar }) {
   const [v, setV] = useState({
@@ -11,6 +12,7 @@ export default function ClienteForm({ inicial, aoSalvar, aoCancelar }) {
   const [erro, setErro] = useState('')
   const [confirmando, setConfirmando] = useState(false)
   const anonimizado = inicial.anonimizado
+  const zap = anonimizado ? null : linkWhatsapp(v.telefone)
   const campo = (n) => ({ value: v[n], onChange: (e) => setV({ ...v, [n]: e.target.value }), disabled: anonimizado })
 
   useEffect(() => {
@@ -55,7 +57,14 @@ export default function ClienteForm({ inicial, aoSalvar, aoCancelar }) {
       <h1>{inicial.id ? (anonimizado ? 'Cliente anonimizado' : 'Cliente') : 'Novo cliente'}</h1>
       {anonimizado && <p className="suave">Os dados pessoais deste cliente foram removidos e não podem ser editados.</p>}
       <label>Nome<input {...campo('nome')} required /></label>
-      <label>Telefone<input type="tel" inputMode="tel" {...campo('telefone')} required /></label>
+      <div className="com-acao">
+        <label>Telefone<input type="tel" inputMode="tel" {...campo('telefone')} required /></label>
+        {zap && (
+          <a className="botao secundario" href={zap} target="_blank" rel="noopener noreferrer" aria-label="Abrir conversa no WhatsApp">
+            <MessageCircle size={18} strokeWidth={1.5} aria-hidden="true" /> WhatsApp
+          </a>
+        )}
+      </div>
       <label>E-mail (opcional)<input type="email" {...campo('email')} /></label>
       <label>CPF ou CNPJ (opcional)<input inputMode="numeric" {...campo('documento')} /></label>
       <label>Endereço (opcional)<input {...campo('endereco')} /></label>
