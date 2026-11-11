@@ -7,6 +7,7 @@ import Layout from './layout/Layout.jsx'
 import Funcionarios from './funcionarios/Funcionarios.jsx'
 import Clientes from './clientes/Clientes.jsx'
 import Veiculos from './veiculos/Veiculos.jsx'
+import Servicos from './servicos/Servicos.jsx'
 import Configuracoes from './configuracoes/Configuracoes.jsx'
 import EmBreve from './paginas/EmBreve.jsx'
 import { Atalhos, Manual, Sobre } from './paginas/Ajuda.jsx'
@@ -29,6 +30,7 @@ export default function App() {
             <Route path="/" element={protegida(<EmBreve titulo="Hoje" />)} />
             <Route path="/clientes" element={protegida(<Clientes />)} />
             <Route path="/veiculos" element={protegida(<Veiculos />)} />
+            <Route path="/servicos" element={protegida(<Servicos />)} />
             <Route path="/funcionarios" element={protegida(<Funcionarios />)} />
             <Route path="/trocar-senha" element={protegida(<TrocarSenha />)} />
             <Route path="/configuracoes" element={protegida(<Configuracoes />)} />

@@ -27,6 +27,11 @@ Atualizar ao final de cada módulo (regra 4 do Arquivo Mestre). Marcar `[x]` qua
 - [ ] Não existe exclusão de cliente, só anonimização (LGPD, mantém a contabilidade). Conferir com o dono se precisa de exclusão física.
 - [ ] Anonimizar não cobre dados pessoais digitados em campos livres de OS futuras (observações): tratar no Módulo 5.
 
+## Módulo 4 — Serviços
+- [ ] A regra "serviço inativo não aparece ao montar OS, orçamento ou agenda" está pronta na API (`ativos=true`), mas só vale de fato quando esses módulos (5, 6 e 7) usarem o filtro e guardarem nome e preço na própria linha (para o histórico não mudar quando o preço padrão mudar).
+- [ ] Não há importação de serviços por planilha (estava no prompt antigo, cortada por simplicidade).
+- [ ] Preço padrão sem histórico de alteração: mudar o preço não é auditado.
+
 ## Módulo 12 — Catálogo de modelos de veículos (planejado)
 - [ ] Fonte: `gpupo/brazilian-cars` (`Resources/data/current/cars.yaml`, ~5,7 mil linhas de modelos; marca, modelo e versões como "1992 Gasolina"; licença MIT, manter o aviso). O repositório foi atualizado pela última vez em 2024-05, então carros mais novos não estão nele: por isso a tela aceita texto livre e o catálogo aprende com o que a oficina cadastra.
 - [ ] Os dados vêm originalmente da tabela FIPE. A licença MIT é do repositório, não garante o direito sobre a origem: confirmar o uso comercial antes de vender.

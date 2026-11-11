@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api } from '../api.js'
 
-/** Carrega uma lista paginada com busca. A busca espera 300 ms de pausa na digitação. */
-export function useListaPaginada(caminho) {
+/** Carrega uma lista paginada com busca. A busca espera 300 ms de pausa na digitação. `extra` = filtros fixos, ex.: '&ativos=true'. */
+export function useListaPaginada(caminho, extra = '') {
   const [pagina, setPagina] = useState(null)
   const [num, setNum] = useState(0)
   const [q, setQ] = useState('')
@@ -15,10 +15,10 @@ export function useListaPaginada(caminho) {
   }, [q])
 
   const carregar = useCallback(() => {
-    api(`${caminho}?page=${num}&size=20&q=${encodeURIComponent(busca)}`)
+    api(`${caminho}?page=${num}&size=20&q=${encodeURIComponent(busca)}${extra}`)
       .then((p) => { setPagina(p); setErro('') })
       .catch((e) => setErro(e.message))
-  }, [caminho, num, busca])
+  }, [caminho, num, busca, extra])
 
   useEffect(carregar, [carregar])
 

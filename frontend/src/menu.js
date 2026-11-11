@@ -7,7 +7,7 @@ export const GRUPOS = [
       { nome: 'Clientes', rota: '/clientes', pronto: true },
       { nome: 'Veículos', rota: '/veiculos', pronto: true },
       { nome: 'Funcionários', rota: '/funcionarios', pronto: true },
-      { nome: 'Serviços', rota: '/servicos' },
+      { nome: 'Serviços', rota: '/servicos', pronto: true },
     ],
   },
   {
