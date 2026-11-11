@@ -21,15 +21,18 @@ public class OrdemServicoService {
     private final FuncionarioService funcionarios;
     private final ServicoService servicos;
     private final AuditoriaService auditoria;
+    private final RegrasFinanceirasDaOs financeiro;
 
     public OrdemServicoService(OrdemServicoRepository repo, ClienteService clientes, VeiculoService veiculos,
-                               FuncionarioService funcionarios, ServicoService servicos, AuditoriaService auditoria) {
+                               FuncionarioService funcionarios, ServicoService servicos, AuditoriaService auditoria,
+                               RegrasFinanceirasDaOs financeiro) {
         this.repo = repo;
         this.clientes = clientes;
         this.veiculos = veiculos;
         this.funcionarios = funcionarios;
         this.servicos = servicos;
         this.auditoria = auditoria;
+        this.financeiro = financeiro;
     }
 
     // Os métodos públicos devolvem o DTO montado dentro da transação: com open-in-view desligado,
@@ -69,6 +72,8 @@ public class OrdemServicoService {
         if (atual == StatusOs.ENTREGUE && !confirmar) {
             throw new NegocioException(HttpStatus.CONFLICT, "Reabrir uma OS entregue exige confirmação.");
         }
+        if (destino == StatusOs.ENTREGUE) financeiro.aoEntregar(id, os.getTotal());
+        if (destino == StatusOs.CANCELADA) financeiro.aoCancelar(id);
         os.setStatus(destino.name());
         os.setAtualizadoEm(LocalDateTime.now());
         auditoria.registrar(atual == StatusOs.ENTREGUE ? "OS_REABERTA" : "OS_STATUS",
