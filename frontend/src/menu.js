@@ -13,7 +13,7 @@ export const GRUPOS = [
   {
     nome: 'Movimentações', icone: ArrowLeftRight, itens: [
       { nome: 'Ordens de Serviço', rota: '/ordens', pronto: true },
-      { nome: 'Orçamentos', rota: '/orcamentos' },
+      { nome: 'Orçamentos', rota: '/orcamentos', pronto: true },
       { nome: 'Agenda', rota: '/agenda' },
       { nome: 'Financeiro', rota: '/financeiro' },
     ],

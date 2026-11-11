@@ -22,7 +22,7 @@ export default function ItensServico({ itens, aoMudar, desabilitado }) {
   return (
     <fieldset disabled={desabilitado}>
       <legend>Serviços</legend>
-      {itens.length === 0 && <p className="suave">Nenhum serviço na OS.</p>}
+      {itens.length === 0 && <p className="suave">Nenhum serviço lançado.</p>}
       {itens.map((it, i) => {
         const q = lerMoeda(it.quantidade)
         const p = lerMoeda(it.preco)
