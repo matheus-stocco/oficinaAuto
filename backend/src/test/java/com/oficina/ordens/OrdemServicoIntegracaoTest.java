@@ -45,6 +45,8 @@ class OrdemServicoIntegracaoTest {
         for (String t : new String[]{"os_item", "ordem_servico", "auditoria", "veiculo", "cliente", "servico", "funcionario"}) {
             jdbc.execute("delete from " + t);
         }
+        // a empresa é uma linha única que os testes de PDF alteram
+        jdbc.execute("update empresa set cnpj = null, logo_arquivo = null, endereco = null, telefone = null");
     }
 
     private long id(String json) {
@@ -218,7 +220,66 @@ class OrdemServicoIntegracaoTest {
         mvc.perform(get("/api/ordens?status=XYZ").cookie(cookie)).andExpect(status().isBadRequest());
         mvc.perform(get("/api/ordens?de=2000-01-01&ate=2000-12-31").cookie(cookie)).andExpect(jsonPath("$.content.length()").value(0));
         mvc.perform(get("/api/ordens?de=2000-01-01").cookie(cookie)).andExpect(jsonPath("$.totalElements").value(3));
+        mvc.perform(get("/api/ordens?veiculoId=" + veic).cookie(cookie)).andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].id").value(a));
+        mvc.perform(get("/api/ordens?veiculoId=999999").cookie(cookie)).andExpect(jsonPath("$.content.length()").value(0));
         mvc.perform(get("/api/ordens?size=2&page=1").cookie(cookie)).andExpect(jsonPath("$.content.length()").value(1))
                 .andExpect(jsonPath("$.totalPages").value(2));
+    }
+
+    private byte[] pngReal() throws Exception {
+        var img = new java.awt.image.BufferedImage(40, 20, java.awt.image.BufferedImage.TYPE_INT_RGB);
+        var saida = new java.io.ByteArrayOutputStream();
+        javax.imageio.ImageIO.write(img, "png", saida);
+        return saida.toByteArray();
+    }
+
+    @Test
+    void pdfNaoSaiSemLogoECnpjEDizOQueFalta() throws Exception {
+        long os = criarOs("{}");
+        mvc.perform(get("/api/ordens/" + os + "/pdf").cookie(cookie)).andExpect(status().isConflict())
+                .andExpect(jsonPath("$.erro").value(org.hamcrest.Matchers.allOf(
+                        org.hamcrest.Matchers.containsString("logo"), org.hamcrest.Matchers.containsString("CNPJ"))));
+    }
+
+    @Test
+    void pdfExigeLoginEOsInexistenteDa404() throws Exception {
+        mvc.perform(get("/api/ordens/1/pdf")).andExpect(status().isUnauthorized());
+        mvc.perform(put("/api/empresa").cookie(cookie).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"nome\":\"Auto Center Silva\",\"cnpj\":\"12.345.678/0001-90\",\"orcamentoRascunhoHoras\":24}")).andExpect(status().isOk());
+        mvc.perform(multipart("/api/empresa/logo").file(new org.springframework.mock.web.MockMultipartFile("arquivo", "l.png", "image/png", pngReal())).cookie(cookie))
+                .andExpect(status().isOk());
+        mvc.perform(get("/api/ordens/99999999/pdf").cookie(cookie)).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void pdfAbreNoNavegadorNuncaComoDownloadEContemOsDadosDaOs() throws Exception {
+        mvc.perform(put("/api/empresa").cookie(cookie).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"nome\":\"Auto Center Silva\",\"cnpj\":\"12.345.678/0001-90\",\"telefone\":\"(11) 4000-0000\","
+                        + "\"endereco\":\"Rua das Flores, 10 - Centro\",\"orcamentoRascunhoHoras\":24}")).andExpect(status().isOk());
+        mvc.perform(multipart("/api/empresa/logo").file(new org.springframework.mock.web.MockMultipartFile("arquivo", "l.png", "image/png", pngReal())).cookie(cookie))
+                .andExpect(status().isOk());
+        long cli = criarCliente("Maria Souza");
+        long os = criarOs("""
+                {"clienteId":%d,"defeitoRelatado":"Barulho na roda",
+                 "itens":[{"descricao":"Balanceamento","quantidade":2,"precoUnit":80.50},{"descricao":"Alinhamento","quantidade":1,"precoUnit":120}],
+                 "maoDeObra":100,"pecasValor":200,"pecasDescricao":"2 pneus",
+                 "taxaCompraTipo":"PERCENTUAL","taxaCompra":10,"descontoTipo":"PERCENTUAL","desconto":5}""".formatted(cli));
+
+        var resposta = mvc.perform(get("/api/ordens/" + os + "/pdf").cookie(cookie)).andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_PDF))
+                .andExpect(header().string("Content-Disposition", org.hamcrest.Matchers.startsWith("inline")))
+                .andExpect(header().string("Content-Disposition", org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("attachment"))))
+                .andReturn().getResponse();
+        byte[] bytes = resposta.getContentAsByteArray();
+        org.junit.jupiter.api.Assertions.assertEquals("%PDF", new String(bytes, 0, 4));
+
+        var leitor = new com.lowagie.text.pdf.PdfReader(bytes);
+        String texto = new com.lowagie.text.pdf.parser.PdfTextExtractor(leitor).getTextFromPage(1);
+        for (String esperado : new String[]{"Auto Center Silva", "CNPJ 12.345.678/0001-90", "Tel. (11) 4000-0000", "Rua das Flores, 10 - Centro",
+                "Ordem de Serviço nº " + os, "Maria Souza", "Balanceamento", "Alinhamento", "2 pneus",
+                "R$ 161,00", "Taxa de compra das peças (10%)", "Desconto (5%)", "TOTAL: R$ 570,95"}) {
+            org.junit.jupiter.api.Assertions.assertTrue(texto.contains(esperado), "faltou no PDF: " + esperado + "\n" + texto);
+        }
     }
 }

@@ -17,6 +17,7 @@ function montar(os, rota = '/ordens/7') {
     const m = op?.method || 'GET'
     let corpo = { content: [] }
     if (m === 'GET' && url === '/api/ordens/7') corpo = os
+    if (m === 'GET' && url === '/api/empresa') corpo = { temLogo: true, cnpj: '12345678000190' }
     if (m === 'PATCH') corpo = { ...os, status: JSON.parse(op.body).status }
     if (m === 'PUT') corpo = os
     if (m === 'POST') corpo = { ...os, id: 9 }
@@ -108,4 +109,21 @@ test('nova OS salva e vai para a tela da OS criada', async () => {
   montar(OS(), '/ordens/nova')
   fireEvent.click(await screen.findByRole('button', { name: /Salvar/ }))
   await waitFor(() => expect(fetch.mock.calls.some(([u, o]) => u === '/api/ordens' && o?.method === 'POST')).toBe(true))
+})
+
+test('a OS salva oferece o PDF em nova aba e avisa que ele mostra a versão salva', async () => {
+  montar(OS())
+  const link = await screen.findByRole('link', { name: /Abrir PDF da OS/ })
+  expect(link.getAttribute('href')).toBe('/api/ordens/7/pdf')
+  expect(link.getAttribute('target')).toBe('_blank')
+  expect(link.hasAttribute('download')).toBe(false)
+  expect(screen.queryByText(/mostra a versão salva/)).toBeNull()
+  fireEvent.change(screen.getByLabelText('Mão de obra (R$)'), { target: { value: '1' } })
+  expect(screen.getByText(/mostra a versão salva/)).toBeTruthy()
+})
+
+test('nova OS ainda sem número não oferece PDF', async () => {
+  montar(OS(), '/ordens/nova')
+  await screen.findByRole('button', { name: /Salvar/ })
+  expect(screen.queryByRole('link', { name: /Abrir PDF/ })).toBeNull()
 })

@@ -7,6 +7,7 @@ import SeletorCliente from '../veiculos/SeletorCliente.jsx'
 import SeletorVeiculo from './SeletorVeiculo.jsx'
 import ItensServico from './ItensServico.jsx'
 import BlocoValores from './BlocoValores.jsx'
+import LinkPdf from '../componentes/LinkPdf.jsx'
 import { calcular } from './calculo.js'
 import { ACOES, EDITAVEL, ROTULO_STATUS } from './rotulos.js'
 
@@ -158,7 +159,10 @@ export default function OrdemEditor() {
       <div className="acoes">
         {editavel && <button className="botao"><Save size={18} strokeWidth={1.5} aria-hidden="true" /> Salvar</button>}
         <button type="button" className="botao secundario" onClick={() => navegar('/ordens')}>Voltar</button>
+        {id && <LinkPdf href={`/api/ordens/${id}/pdf`} rotulo="Abrir PDF da OS" />}
       </div>
+
+      {id && sujo && <p className="suave">O PDF mostra a versão salva da OS. Salve as alterações antes de abri-lo.</p>}
 
       {id && ACOES[status].length > 0 && (
         <fieldset>

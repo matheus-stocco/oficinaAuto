@@ -215,6 +215,10 @@ relatórios. Não duplique a fórmula.
     campos, para o celular não dar zoom.
   - O calendário da Agenda troca para a visão de dia ou semana no celular.
   - Modais ocupam a tela inteira no celular, com botão de fechar acessível.
+- **PDF sempre abre no navegador:** é servido com `Content-Disposition: inline` e aberto numa nova
+  aba (`<a target="_blank" rel="noopener">`), **nunca como download direto**. A pessoa salva ou
+  exporta pelo visualizador, se quiser. Proibido `attachment` e o atributo `download`. Na tela,
+  use sempre o componente `LinkPdf`, que também avisa antes se faltar logo ou CNPJ.
 - **PDF:** OpenPDF no backend. **Todo PDF começa com o mesmo cabeçalho:** logo da oficina,
   nome da empresa, endereço, CNPJ e telefone. Se faltar logo ou CNPJ, o PDF não é gerado
   e o sistema diz o que falta.

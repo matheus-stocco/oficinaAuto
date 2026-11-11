@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,10 +20,12 @@ public class OrdemServicoController {
 
     private final OrdemServicoService service;
     private final OrdemServicoRepository repo;
+    private final OsPdfService pdf;
 
-    public OrdemServicoController(OrdemServicoService service, OrdemServicoRepository repo) {
+    public OrdemServicoController(OrdemServicoService service, OrdemServicoRepository repo, OsPdfService pdf) {
         this.service = service;
         this.repo = repo;
+        this.pdf = pdf;
     }
 
     @GetMapping
@@ -29,6 +33,7 @@ public class OrdemServicoController {
                              @RequestParam(required = false) String q,
                              @RequestParam(required = false) LocalDate de,
                              @RequestParam(required = false) LocalDate ate,
+                             @RequestParam(defaultValue = "0") long veiculoId,
                              @RequestParam(defaultValue = "0") int page,
                              @RequestParam(defaultValue = "20") int size) {
         String st = status == null || status.isBlank() ? "" : estado(status).name();
@@ -37,7 +42,7 @@ public class OrdemServicoController {
                 Sort.by(Sort.Direction.DESC, "id"));
         return repo.buscar(st, texto, Placa.normalizar(texto),
                 (de == null ? LocalDate.of(2000, 1, 1) : de).atStartOfDay(),
-                (ate == null ? LocalDate.of(2999, 1, 1) : ate.plusDays(1)).atStartOfDay(), pageable)
+                (ate == null ? LocalDate.of(2999, 1, 1) : ate.plusDays(1)).atStartOfDay(), veiculoId, pageable)
                 .map(OsResumoDto::de);
     }
 
@@ -59,6 +64,13 @@ public class OrdemServicoController {
     @PatchMapping("/{id}/status")
     OsDto status(@PathVariable Long id, @RequestBody MudancaStatus corpo) {
         return service.mudarStatus(id, estado(corpo.status()), corpo.confirmar());
+    }
+
+    @GetMapping("/{id}/pdf")
+    ResponseEntity<byte[]> pdf(@PathVariable Long id) {
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF)
+                .header("Content-Disposition", "inline; filename=\"os-" + id + ".pdf\"")
+                .header("X-Content-Type-Options", "nosniff").body(pdf.gerar(id));
     }
 
     private static StatusOs estado(String s) {
