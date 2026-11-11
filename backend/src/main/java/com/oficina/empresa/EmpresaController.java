@@ -15,31 +15,35 @@ public class EmpresaController {
 
     @GetMapping
     EmpresaDto ver() {
-        return EmpresaDto.de(service.buscar());
+        return dto(service.buscar());
     }
 
     @PutMapping
     EmpresaDto atualizar(@Valid @RequestBody EmpresaForm form) {
-        return EmpresaDto.de(service.atualizar(form));
+        return dto(service.atualizar(form));
     }
 
     @PostMapping("/logo")
     EmpresaDto enviarLogo(@RequestParam("arquivo") MultipartFile arquivo) {
-        return EmpresaDto.de(service.salvarLogo(arquivo));
+        return dto(service.salvarLogo(arquivo));
     }
 
     @DeleteMapping("/logo")
     EmpresaDto removerLogo() {
-        return EmpresaDto.de(service.removerLogo());
+        return dto(service.removerLogo());
     }
 
     @PostMapping("/fundo")
     EmpresaDto enviarFundo(@RequestParam("arquivo") MultipartFile arquivo) {
-        return EmpresaDto.de(service.salvarFundo(arquivo));
+        return dto(service.salvarFundo(arquivo));
     }
 
     @DeleteMapping("/fundo")
     EmpresaDto removerFundo() {
-        return EmpresaDto.de(service.removerFundo());
+        return dto(service.removerFundo());
+    }
+
+    private EmpresaDto dto(Empresa e) {
+        return EmpresaDto.de(e, service.existe(e.getLogoArquivo()), service.existe(e.getFundoArquivo()));
     }
 }

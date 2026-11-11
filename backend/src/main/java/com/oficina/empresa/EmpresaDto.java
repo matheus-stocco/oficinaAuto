@@ -6,9 +6,10 @@ import java.time.ZoneOffset;
 public record EmpresaDto(String nome, String cnpj, String telefone, String endereco, boolean temLogo,
                          String fundoTipo, String fundoCor, boolean temFundoImagem,
                          int orcamentoRascunhoHoras, long versao) {
-    static EmpresaDto de(Empresa e) {
+    /** temLogo e temFundo dizem se o ARQUIVO existe (não só se o banco aponta para ele). */
+    static EmpresaDto de(Empresa e, boolean temLogo, boolean temFundo) {
         return new EmpresaDto(e.getNome(), e.getCnpj(), e.getTelefone(), e.getEndereco(),
-                e.getLogoArquivo() != null, e.getFundoTipo(), e.getFundoCor(), e.getFundoArquivo() != null,
+                temLogo, e.getFundoTipo(), e.getFundoCor(), temFundo,
                 e.getOrcamentoRascunhoHoras(), e.getAtualizadoEm().toInstant(ZoneOffset.UTC).toEpochMilli());
     }
 }

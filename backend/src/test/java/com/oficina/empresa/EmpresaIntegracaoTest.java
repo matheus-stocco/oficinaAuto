@@ -98,4 +98,16 @@ class EmpresaIntegracaoTest {
                         .content("{\"nome\":\"X\",\"fundoTipo\":\"IMAGEM\",\"orcamentoRascunhoHoras\":24}"))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void logoCujoArquivoSumiuDoDiscoNaoContaComoLogo() throws Exception {
+        Cookie c = entrar();
+        mvc.perform(multipart("/api/empresa/logo").file(new MockMultipartFile("arquivo", "l.png", "image/png", PNG)).cookie(c))
+                .andExpect(jsonPath("$.temLogo").value(true));
+        // simula o volume de uploads não montado: o banco aponta para o arquivo, mas ele não está no disco
+        java.nio.file.Files.deleteIfExists(java.nio.file.Path.of("target/uploads-test/logo.png"));
+        mvc.perform(get("/api/empresa").cookie(c)).andExpect(jsonPath("$.temLogo").value(false));
+        mvc.perform(get("/api/publico/identidade")).andExpect(jsonPath("$.temLogo").value(false));
+        mvc.perform(get("/api/publico/logo")).andExpect(status().isNotFound());
+    }
 }

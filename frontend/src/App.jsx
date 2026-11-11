@@ -14,6 +14,7 @@ import Orcamentos from './orcamentos/Orcamentos.jsx'
 import OrcamentoEditor from './orcamentos/OrcamentoEditor.jsx'
 import Agenda from './agenda/Agenda.jsx'
 import AgendamentoEditor from './agenda/AgendamentoEditor.jsx'
+import Financeiro from './financeiro/Financeiro.jsx'
 import Configuracoes from './configuracoes/Configuracoes.jsx'
 import EmBreve from './paginas/EmBreve.jsx'
 import { Atalhos, Manual, Sobre } from './paginas/Ajuda.jsx'
@@ -46,6 +47,7 @@ export default function App() {
             <Route path="/agenda" element={protegida(<Agenda />)} />
             <Route path="/agenda/novo" element={protegida(<AgendamentoEditor />)} />
             <Route path="/agenda/:id" element={protegida(<AgendamentoEditor />)} />
+            <Route path="/financeiro" element={protegida(<Financeiro />)} />
             <Route path="/funcionarios" element={protegida(<Funcionarios />)} />
             <Route path="/trocar-senha" element={protegida(<TrocarSenha />)} />
             <Route path="/configuracoes" element={protegida(<Configuracoes />)} />

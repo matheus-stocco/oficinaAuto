@@ -15,7 +15,7 @@ export const GRUPOS = [
       { nome: 'Ordens de Serviço', rota: '/ordens', pronto: true },
       { nome: 'Orçamentos', rota: '/orcamentos', pronto: true },
       { nome: 'Agenda', rota: '/agenda', pronto: true },
-      { nome: 'Financeiro', rota: '/financeiro' },
+      { nome: 'Financeiro', rota: '/financeiro', pronto: true },
     ],
   },
   {

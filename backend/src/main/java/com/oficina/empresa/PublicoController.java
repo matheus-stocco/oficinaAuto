@@ -19,7 +19,8 @@ public class PublicoController {
 
     @GetMapping("/identidade")
     IdentidadeDto identidade() {
-        return IdentidadeDto.de(service.buscar());
+        Empresa e = service.buscar();
+        return IdentidadeDto.de(e, service.existe(e.getLogoArquivo()), service.existe(e.getFundoArquivo()));
     }
 
     @GetMapping("/logo")

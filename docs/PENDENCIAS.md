@@ -33,7 +33,7 @@ Atualizar ao final de cada módulo (regra 4 do Arquivo Mestre). Marcar `[x]` qua
 - [ ] Preço padrão sem histórico de alteração: mudar o preço não é auditado.
 
 ## Módulo 5 — Ordens de Serviço
-- [ ] A regra "OS só vira ENTREGUE com saldo zerado ou fiado registrado" depende do financeiro: entra no Módulo 8. Hoje qualquer OS pronta pode ser entregue.
+- [x] A regra "OS só vira ENTREGUE com saldo zerado ou fiado registrado": feita no Módulo 8 (parte A).
 - [ ] A prévia dos totais na tela repete a fórmula do backend (`calculo.js` e `CalculoValores`), com os mesmos casos de teste nos dois lados. Se a fórmula mudar, mudar nos dois e rodar os dois testes.
 - [ ] Texto livre da OS (defeito relatado, observações, descrições) pode conter dado pessoal e a anonimização do cliente não o limpa. Avisar o atendente na tela ou limpar na anonimização.
 - [ ] Fotos e checklist de entrada: cortados de propósito (só o atendente usa o sistema, pelo computador). Está no ROADMAP.
@@ -61,6 +61,18 @@ Atualizar ao final de cada módulo (regra 4 do Arquivo Mestre). Marcar `[x]` qua
 - [ ] A semana começa no domingo (fixo). Data e hora são locais, sem fuso: servidor e navegador precisam estar no mesmo fuso (o caso de uma oficina por VPS).
 - [ ] No tablet em pé (701 a 900 px) o mês aparece compacto, com nomes cortados; o celular (até 700 px) usa dia ou semana.
 - [ ] Os testes do calendário no frontend congelam a data (relógio falso); se o fuso da máquina de testes mudar, conferir.
+
+## Módulo 8 — Financeiro (parte A feita; parte B, Asaas, pendente)
+- [ ] Parte B inteira: `GatewayPagamento`, implementação do Asaas, botão "Gerar cobrança" (só com chave configurada) e webhook com token e idempotência. Precisa de uma chave de sandbox do Asaas para testar de verdade; sem ela, só testes com respostas simuladas.
+- [ ] Editar o valor da OS depois de receber é permitido (a OS mostra o saldo negativo ou o que falta); a entrega fica bloqueada até acertar. Não há bloqueio de edição de itens quando há pagamento.
+- [ ] Estorno é do registro do sistema: devolver o dinheiro ao cliente (Pix, cartão) é feito fora e não é conferido aqui.
+- [ ] Fiado não tem juros, multa nem parcelamento: um fiado é um valor com um vencimento. Parcelas = vários fiados.
+- [ ] A data do pagamento não pode ser futura, mas pode ser qualquer dia passado (lançar o que entrou ontem). O caixa é por dia do recebimento, não por hora; não há "fechamento de caixa" que impeça mexer em dias antigos.
+- [ ] Despesas não têm anexo, fornecedor nem recorrência; categorias são texto livre (sugeridas pelas já usadas).
+- [ ] Não há relatório financeiro ainda (Módulo 9) nem cartões no Dashboard (Módulo 10).
+- [ ] Taxa de maquininha/cartão não é descontada: o caixa mostra o valor cobrado, não o líquido.
+- [ ] No tablet e no celular, o resumo do caixa quebra em duas colunas; a lista de recebimentos do dia não mostra a hora (só o dia).
+- [ ] Se o volume de uploads não estiver montado, o sistema trata como "sem logo" (e o PDF avisa o que falta); no Dokploy, conferir o volume `/data/uploads` (Módulo 0).
 
 ## Módulo 12 — Catálogo de modelos de veículos (planejado)
 - [ ] Fonte: `gpupo/brazilian-cars` (`Resources/data/current/cars.yaml`, ~5,7 mil linhas de modelos; marca, modelo e versões como "1992 Gasolina"; licença MIT, manter o aviso). O repositório foi atualizado pela última vez em 2024-05, então carros mais novos não estão nele: por isso a tela aceita texto livre e o catálogo aprende com o que a oficina cadastra.

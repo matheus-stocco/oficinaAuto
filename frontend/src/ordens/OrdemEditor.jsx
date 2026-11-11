@@ -8,6 +8,7 @@ import ItensServico from './ItensServico.jsx'
 import BlocoValores from './BlocoValores.jsx'
 import LinkPdf from '../componentes/LinkPdf.jsx'
 import Totais from './Totais.jsx'
+import PagamentosOs from './PagamentosOs.jsx'
 import { analisar, corpoValores, erroDeValidacao, rotuloVeiculo, VALORES_VAZIOS, valoresDeDocumento } from './valores.js'
 import { ACOES, EDITAVEL, ROTULO_STATUS } from './rotulos.js'
 
@@ -124,6 +125,8 @@ export default function OrdemEditor() {
       </div>
 
       {id && sujo && <p className="suave">O PDF mostra a versão salva da OS. Salve as alterações antes de abri-lo.</p>}
+
+      {id && os && <PagamentosOs osId={id} status={status} chave={`${os.atualizadoEm}|${os.status}`} />}
 
       {id && ACOES[status].length > 0 && (
         <fieldset>

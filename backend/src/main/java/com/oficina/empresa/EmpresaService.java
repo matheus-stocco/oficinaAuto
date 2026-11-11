@@ -84,6 +84,11 @@ public class EmpresaService {
         return tocar(e);
     }
 
+    /** O arquivo está mesmo no disco? O banco pode apontar para um logo cujo volume de uploads não foi montado. */
+    public boolean existe(String nomeArquivo) {
+        return nomeArquivo != null && Files.isRegularFile(pasta.resolve(nomeArquivo));
+    }
+
     /** Lê o arquivo salvo (logo ou fundo) ou devolve null se não existir. */
     public byte[] ler(String nomeArquivo) {
         if (nomeArquivo == null) return null;

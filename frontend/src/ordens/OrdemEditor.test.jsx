@@ -18,6 +18,7 @@ function montar(os, rota = '/ordens/7') {
     let corpo = { content: [] }
     if (m === 'GET' && url === '/api/ordens/7') corpo = os
     if (m === 'GET' && url === '/api/empresa') corpo = { temLogo: true, cnpj: '12345678000190' }
+    if (m === 'GET' && url === '/api/ordens/7/financeiro') corpo = { total: 456.95, pago: 0, fiadoAberto: 0, saldo: 456.95, podeEntregar: false, pagamentos: [], fiados: [] }
     if (m === 'PATCH') corpo = { ...os, status: JSON.parse(op.body).status }
     if (m === 'PUT') corpo = os
     if (m === 'POST') corpo = { ...os, id: 9 }
