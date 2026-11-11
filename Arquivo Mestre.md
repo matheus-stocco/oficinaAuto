@@ -524,4 +524,5 @@ os módulos `CONCLUÍDO`.
 6. Dúvida de produto: escolha a opção mais simples para a oficina, registre a decisão em
    `docs/DECISOES.md` e siga em frente.
 7. Antes de push, lembre: **o push publica no ar**. Nada quebrado.
-8. **FIPE e CEP não fazem parte deste trabalho.** Não implemente nem prepare ganchos.
+8. **Nenhuma API externa de FIPE e nenhuma busca de CEP** neste trabalho. O catálogo de
+   veículos é o Módulo 12 (arquivo local); o CEP não tem módulo. Não prepare ganchos antes da hora.
