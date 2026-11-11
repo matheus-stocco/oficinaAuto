@@ -122,7 +122,7 @@ class FinanceiroIntegracaoTest {
         pagar(os, "0", "PIX", null).andExpect(status().isBadRequest());
         pagar(os, "-5", "PIX", null).andExpect(status().isBadRequest());
         pagar(os, "10.123", "PIX", null).andExpect(status().isBadRequest());
-        pagar(os, "10", "BOLETO", null).andExpect(status().isBadRequest());
+        pagar(os, "10", "CHEQUE", null).andExpect(status().isBadRequest());
         pagar(os, "100.01", "PIX", null).andExpect(status().isBadRequest()).andExpect(jsonPath("$.erro").value(org.hamcrest.Matchers.containsString("saldo")));
         pagar(os, "10", "PIX", amanha).andExpect(status().isBadRequest());
         json(post("/api/ordens/" + os + "/pagamentos"), "{\"valor\":10}").andExpect(status().isBadRequest());

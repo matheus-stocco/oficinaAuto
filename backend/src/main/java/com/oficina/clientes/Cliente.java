@@ -23,6 +23,8 @@ public class Cliente {
     private String documento;
     private String endereco;
     private String observacoes;
+    /** Id do cliente no Asaas (criado na primeira cobrança online). */
+    private String asaasId;
     private LocalDateTime anonimizadoEm;
     private LocalDateTime criadoEm = LocalDateTime.now();
 

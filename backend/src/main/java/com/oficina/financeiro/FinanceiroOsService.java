@@ -29,13 +29,15 @@ public class FinanceiroOsService implements RegrasFinanceirasDaOs {
     private final PagamentoRepository pagamentos;
     private final ReceberRepository receber;
     private final AuditoriaService auditoria;
+    private final CobrancaRepository cobrancas;
 
     public FinanceiroOsService(OrdemServicoRepository ordens, PagamentoRepository pagamentos, ReceberRepository receber,
-                               AuditoriaService auditoria) {
+                               AuditoriaService auditoria, CobrancaRepository cobrancas) {
         this.ordens = ordens;
         this.pagamentos = pagamentos;
         this.receber = receber;
         this.auditoria = auditoria;
+        this.cobrancas = cobrancas;
     }
 
     @Transactional(readOnly = true)
@@ -138,6 +140,9 @@ public class FinanceiroOsService implements RegrasFinanceirasDaOs {
         if (pagamentos.contarValidos(osId) > 0) {
             throw new NegocioException(HttpStatus.CONFLICT, "Esta OS tem pagamento recebido: estorne os pagamentos antes de cancelar.");
         }
+        if (cobrancas.existsByOsIdAndStatus(osId, Cobranca.PENDENTE)) {
+            throw new NegocioException(HttpStatus.CONFLICT, "Há cobrança online pendente: cancele-a antes de cancelar a OS.");
+        }
         for (Receber r : receber.findByOsIdAndStatus(osId, Receber.ABERTO)) {
             r.setStatus(Receber.CANCELADO);
             auditoria.registrar("FIADO_CANCELADO", "os " + osId + " fiado " + r.getId() + " (OS cancelada)");
@@ -164,7 +169,7 @@ public class FinanceiroOsService implements RegrasFinanceirasDaOs {
     }
 
     private void validarSaldo(OrdemServico os, BigDecimal valor) {
-        BigDecimal saldo = saldo(os);
+        BigDecimal saldo = saldoDe(os);
         if (saldo.signum() <= 0) {
             throw new NegocioException(HttpStatus.BAD_REQUEST, "Esta OS já está quitada ou totalmente fiada: não há saldo.");
         }
@@ -173,7 +178,8 @@ public class FinanceiroOsService implements RegrasFinanceirasDaOs {
         }
     }
 
-    private BigDecimal saldo(OrdemServico os) {
+    /** total - pagamentos válidos - fiado em aberto. */
+    BigDecimal saldoDe(OrdemServico os) {
         return os.getTotal().subtract(pagamentos.somaValida(os.getId())).subtract(receber.somaAberta(os.getId()));
     }
 

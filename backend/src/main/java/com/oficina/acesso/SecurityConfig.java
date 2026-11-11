@@ -26,7 +26,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(a -> a
-                        .requestMatchers("/api/saude", "/api/auth/login", "/api/auth/logout", "/api/auth/eu", "/api/publico/**").permitAll()
+                        .requestMatchers("/api/saude", "/api/auth/login", "/api/auth/logout", "/api/auth/eu", "/api/publico/**", "/api/webhooks/asaas").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
