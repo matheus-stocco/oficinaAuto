@@ -286,8 +286,8 @@ A oficina é a **controladora**; o sistema trata dados pessoais mínimos.
    ou nenhum dos dois.
 2. **Agenda** quando o serviço é para outro dia: escolhe o dia no calendário e registra
    os serviços a executar. No dia, abre a OS direto do agendamento.
-3. **Orçamento** (opcional): monta e envia o PDF ou o link de WhatsApp. Se o cliente
-   aprovar no mesmo dia, converte em OS com um clique.
+3. **Orçamento** (opcional): monta e abre o PDF no navegador, salva e compartilha como quiser
+   (por exemplo, WhatsApp). Se o cliente aprovar no mesmo dia, converte em OS com um clique.
 4. **OS** aberta com km, defeito relatado e mecânico responsável; adiciona serviços,
    mão de obra, peças (repasse) e desconto. Passa por **Aberta, Em execução, Pronta e
    Entregue**.
@@ -389,12 +389,14 @@ cabeçalho.
 **Entrega:**
 - Menu próprio. Orçamento com cliente cadastrado **ou** nome e telefone avulsos, veículo
   ou placa e modelo avulsos, e o mesmo bloco de valores (usando `CalculoValores`).
-- **Gerar PDF** ou **link de WhatsApp** marca `gerado_em`. A partir daí ele fica em
-  **rascunho** pelo prazo `orcamento_rascunho_horas` (padrão 24 h) e pode ser reaberto e
-  corrigido.
+- **Só PDF** (sem link nem aviso de WhatsApp): abre no navegador como todo PDF (`LinkPdf`) e a
+  pessoa salva e compartilha se quiser. Abrir o PDF pela primeira vez marca `gerado_em`. A
+  partir daí ele fica em **rascunho** pelo prazo `orcamento_rascunho_horas` (padrão 24 h) e
+  pode ser reaberto e corrigido.
 - **Criar OS a partir deste orçamento:** só enquanto existe. Copia cliente, veículo e
-  itens para uma OS nova, oferece **cadastro rápido de cliente** (nome e telefone) se
-  não houver cliente (pode ser pulado), e **apaga o orçamento** na mesma transação.
+  itens para uma OS nova. Se o orçamento tem cliente ou veículo avulsos, oferece
+  **cadastrá-los na hora** (nome e telefone do cliente; placa e modelo do veículo), e pode
+  ser pulado. **Apaga o orçamento** na mesma transação.
 - **Limpeza automática:** rotina agendada (a cada hora) apaga os orçamentos cujo prazo
   expirou, e orçamentos sem `gerado_em` há mais de 7 dias.
 **Aceite:** teste da expiração (orçamento vencido some, dentro do prazo permanece); a

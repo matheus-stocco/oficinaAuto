@@ -83,9 +83,7 @@ public class OrdemServicoService {
 
     private void aplicar(OrdemServico os, OsForm f) {
         List<OsForm.ItemForm> itens = f.itens() == null ? List.of() : f.itens();
-        var calculo = CalculoValores.calcular(new CalculoValores.Entrada(
-                itens.stream().map(i -> new CalculoValores.Linha(i.quantidade(), i.precoUnit())).toList(),
-                f.maoDeObra(), f.pecasValor(), f.taxaCompraTipo(), f.taxaCompra(), f.descontoTipo(), f.desconto()));
+        os.aplicarValores(f); // recalcula os totais antes de mexer em qualquer outro campo
 
         os.setCliente(f.clienteId() == null ? null : clientes.buscar(f.clienteId()));
         os.setVeiculo(f.veiculoId() == null ? null : veiculos.buscar(f.veiculoId()));
@@ -94,21 +92,6 @@ public class OrdemServicoService {
         os.setDefeitoRelatado(vazioParaNulo(f.defeitoRelatado()));
         os.setObservacoes(vazioParaNulo(f.observacoes()));
         os.setPrevisaoEntrega(f.previsaoEntrega());
-
-        os.setMaoDeObra(calculo.maoDeObra());
-        os.setMaoDeObraDescricao(vazioParaNulo(f.maoDeObraDescricao()));
-        os.setPecasValor(calculo.pecas());
-        os.setPecasDescricao(vazioParaNulo(f.pecasDescricao()));
-        os.setTaxaCompraTipo(f.taxaCompraTipo() == null ? TipoValor.VALOR : f.taxaCompraTipo());
-        os.setTaxaCompra(f.taxaCompra() == null ? java.math.BigDecimal.ZERO : f.taxaCompra());
-        os.setDescontoTipo(f.descontoTipo() == null ? TipoValor.VALOR : f.descontoTipo());
-        os.setDesconto(f.desconto() == null ? java.math.BigDecimal.ZERO : f.desconto());
-
-        os.setSubtotalServicos(calculo.subtotalServicos());
-        os.setTaxaCompraValor(calculo.taxaCompra());
-        os.setDescontoValor(calculo.desconto());
-        os.setTotal(calculo.total());
-        os.setReceitaOficina(calculo.receitaOficina());
         os.setAtualizadoEm(LocalDateTime.now());
 
         os.getItens().clear();

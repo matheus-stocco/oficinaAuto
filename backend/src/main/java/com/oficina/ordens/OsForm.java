@@ -27,7 +27,7 @@ public record OsForm(
         @Digits(integer = 10, fraction = 2, message = "A taxa de compra deve ter no máximo 2 casas decimais.") BigDecimal taxaCompra,
         TipoValor descontoTipo,
         @DecimalMin(value = "0.00", message = "O desconto não pode ser negativo.")
-        @Digits(integer = 10, fraction = 2, message = "O desconto deve ter no máximo 2 casas decimais.") BigDecimal desconto) {
+        @Digits(integer = 10, fraction = 2, message = "O desconto deve ter no máximo 2 casas decimais.") BigDecimal desconto) implements FormComItens {
 
     public record ItemForm(
             Long servicoId,

@@ -27,13 +27,8 @@ public record OsDto(Long id, String status, Pessoa cliente, VeiculoResumo veicul
                 v == null ? null : new VeiculoResumo(v.getId(), v.getPlaca(), v.getMarca(), v.getModelo()),
                 m == null ? null : new Pessoa(m.getId(), m.getContato().getNome(), m.getContato().getTelefone()),
                 o.getKmEntrada(), o.getDefeitoRelatado(), o.getObservacoes(), o.getPrevisaoEntrega(),
-                o.getItens().stream().map(i -> new Item(i.getId(), i.getServico() == null ? null : i.getServico().getId(),
-                        i.getDescricao(), i.getQuantidade(), i.getPrecoUnit(),
-                        i.getQuantidade().multiply(i.getPrecoUnit()).setScale(2, java.math.RoundingMode.HALF_UP))).toList(),
-                new Valores(o.getMaoDeObra(), o.getMaoDeObraDescricao(), o.getPecasValor(), o.getPecasDescricao(),
-                        o.getTaxaCompraTipo(), o.getTaxaCompra(), o.getDescontoTipo(), o.getDesconto()),
-                new Totais(o.getSubtotalServicos(), o.getTaxaCompraValor(), o.getDescontoValor(), o.getTotal(),
-                        o.getReceitaOficina(), o.getPecasValor()),
+                o.getItens().stream().map(ItemDocumento::dto).toList(),
+                o.valoresDto(), o.totaisDto(),
                 o.getCriadoEm(), o.getAtualizadoEm());
     }
 }
