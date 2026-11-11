@@ -1,0 +1,16 @@
+# dependências e build
+node_modules/
+target/
+dist/
+bin/
+*.class
+# segredos e dados locais
+.env
+.env.*
+!.env.example
+uploads/
+# editor / sistema
+.vscode/
+.idea/
+*.iml
+.DS_Store
