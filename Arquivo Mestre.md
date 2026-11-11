@@ -39,8 +39,12 @@ Princípios (valem para toda decisão):
 
 ## 2. Ambiente de desenvolvimento = produção de teste (Dokploy)
 
-Todo o trabalho roda **direto na VPS**, gerenciada pelo **Dokploy**. Cada `git push`
+Todo o trabalho roda **direto na VPS** (Hostinger), gerenciada pelo **Dokploy**. O build
+e a publicação são **automáticos**, feitos pelo **Railpack** do Dokploy. Cada `git push`
 publica o sistema **online na hora**, e o desenvolvedor humano testa cada módulo ali.
+
+**Proibido Docker no projeto:** nenhum `Dockerfile`, `docker-compose.yml` ou
+`.dockerignore`. O projeto é só código-fonte e o Railpack detecta e constrói sozinho.
 
 Consequências, que são regras:
 
@@ -52,12 +56,20 @@ Consequências, que são regras:
    Versione só `.env.example`.
 4. **Healthcheck:** exponha `GET /api/saude` (sem login, devolve só `{"status":"ok"}`) e
    configure-o no Dokploy, para um deploy com falha não substituir o que está no ar.
-5. **Estrutura de deploy:** `backend/Dockerfile`, `frontend/Dockerfile` (build estático
-   servido por nginx, com proxy de `/api` para o backend) e `docker-compose.yml` com
-   `postgres` (volume nomeado), `backend` e `frontend`. HTTPS e domínio ficam por conta
-   do Dokploy.
-6. Uploads (logo, fundo) ficam num **volume nomeado** (`/data/uploads`), nunca dentro da
-   imagem, para sobreviver a deploys.
+5. **Estrutura de deploy (monorepo, 3 recursos no Dokploy):**
+   - **Banco:** serviço PostgreSQL do próprio Dokploy (com volume persistente).
+   - **Backend:** aplicação com diretório raiz `backend/`. O Railpack detecta o Maven.
+     Lê a porta de `PORT` (`server.port=${PORT:8080}`).
+   - **Frontend:** aplicação com diretório raiz `frontend/`. O Railpack detecta o Vite e
+     publica o build estático.
+   - **Um domínio só:** o frontend atende `/` e o backend atende o caminho `/api` (sem
+     remover o prefixo), configurado nos Domínios do Dokploy. Assim front e API ficam na
+     mesma origem, o que o cookie `SameSite=Strict` exige. HTTPS por conta do Dokploy.
+   - Versões de Java e Node são fixadas por arquivos do projeto (ex.: `.java-version`,
+     `.node-version`) e confirmadas no primeiro deploy.
+6. Uploads (logo, fundo) ficam num **volume montado no backend pelo Dokploy**
+   (`/data/uploads`, caminho vindo de variável de ambiente), nunca dentro do código
+   publicado, para sobreviver a deploys.
 7. Antes de um módulo que **altera tabelas existentes**, avise o humano para fazer um
    backup do banco pelo Dokploy.
 
@@ -210,7 +222,7 @@ relatórios. Não duplique a fórmula.
     validações, serviços) e do frontend (Vitest: componentes e lógica de tela), cobrindo o
     caminho feliz e os erros principais.
   - **Ao final de cada módulo**, rode **apenas os testes do módulo desenvolvido** (por
-    exemplo `mvn test -Dtest='com.oficina.clientes.**'` e `npx vitest run <pasta do
+    exemplo `mvn test -Dtest='com.oficina.clientes.*Test'` e `npx vitest run <pasta do
     módulo>`), **não a suíte inteira**, e mostre a saída. O módulo só é concluído com os
     testes dele verdes.
   - Dinheiro (`CalculoValores`), autorização, expiração do orçamento, webhook e
@@ -295,8 +307,9 @@ o módulo quebrado no ambiente online. Ao concluir, siga a seção 8.
 - Criar `frontend/`: React + Vite + react-router + `lucide-react`, com o CSS por tokens
   que o Módulo 2 vai completar.
 - Segredos só por variáveis de ambiente; `.env.example`; CORS por variável (só dev).
-- Dockerfiles, `docker-compose.yml`, `GET /api/saude` e orientação ao humano para
-  configurar o app no Dokploy (repositório, variáveis, domínio, healthcheck).
+- **Sem Docker.** `GET /api/saude`, `.java-version` e `.node-version`, e o passo a passo
+  para o humano configurar o Dokploy em `docs/dokploy.md` (banco, backend, frontend,
+  variáveis, domínio com caminho `/api`, volume de uploads, healthcheck).
 - Configurar a base de testes: JUnit no backend e **Vitest** no frontend, cada um com
   um teste de exemplo passando.
 - README real (o que é, como subir, como é o deploy).
@@ -304,7 +317,7 @@ o módulo quebrado no ambiente online. Ao concluir, siga a seção 8.
   `docs/ROADMAP.md`. Registrar a estrutura inicial no Graphify.
 
 **Aceite:** `git ls-files` sem nenhum `node_modules`, `target` ou `.env`; backend e
-frontend sobem com `docker compose up`; um push publica a aplicação no Dokploy e
+frontend sobem localmente (`./mvnw spring-boot:run` e `npm run dev`); um push publica a aplicação no Dokploy e
 `/api/saude` responde `ok` no domínio; nenhum segredo no git; os testes de exemplo passam.
 
 ### Módulo 1 — Acesso e funcionários
@@ -450,7 +463,7 @@ crítica; uma VPS nova fica no ar seguindo só `docs/instalacao.md`.
 Só começa com os Módulos 0 a 11 `CONCLUÍDO`, cada um com os testes dele verdes.
 **Entrega:** testes de ponta a ponta no **Playwright já instalado** no ambiente. Não
 reinstale o Playwright nem o navegador. Rode contra a aplicação **online no Dokploy**
-(ou, se não houver acesso, local com o mesmo `docker-compose`), com dados de exemplo.
+(ou, se não houver acesso, local com backend e frontend rodando), com dados de exemplo.
 - **Fluxos:** login e troca de senha; cadastro de cliente e veículo; OS completa (criar,
   itens, mão de obra, peças, desconto, Em execução, Pronta, Entregue, pagamento, PDF);
   fiado e contas a receber; orçamento (gerar, criar OS a partir dele, expiração

@@ -1,0 +1,12 @@
+:root {
+  --cor-fundo: #f7f7f8;
+  --cor-texto: #1c1c1e;
+  --cor-suave: #6b6b70;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --cor-fundo: #1c1c1e; --cor-texto: #f2f2f3; --cor-suave: #a0a0a6; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--cor-fundo); color: var(--cor-texto); font-family: system-ui, sans-serif; }
+.base { min-height: 100vh; display: grid; place-content: center; justify-items: center; gap: 0.5rem; padding: 1rem; }
+.base p { color: var(--cor-suave); margin: 0; }

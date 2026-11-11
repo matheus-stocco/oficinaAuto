@@ -1,0 +1,1 @@
+-- Linha de base: as tabelas entram por migrations nos módulos seguintes.
