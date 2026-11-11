@@ -411,6 +411,9 @@ serviços a executar (catálogo ou texto), funcionário opcional e observações
 agendamento**. Consulta posterior por busca e filtro de período, paginada.
 **Aceite:** criar, editar, cancelar e consultar agendamentos de meses diferentes;
 abrir a OS copia serviços, cliente e veículo; o calendário carrega só o período visível.
+Decisões já tomadas: abrir a OS marca o agendamento como `REALIZADO` e guarda o número da OS (uma
+OS por agendamento); cliente e veículo avulsos podem ser cadastrados na hora, como no orçamento; a
+API do calendário recusa períodos acima de 62 dias; no celular não existe a visão de mês.
 
 ### Módulo 8 — Financeiro e Asaas
 **Entrega:**

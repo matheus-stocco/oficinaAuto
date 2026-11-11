@@ -52,6 +52,16 @@ Atualizar ao final de cada módulo (regra 4 do Arquivo Mestre). Marcar `[x]` qua
 - [ ] A tela de orçamento atualiza o prazo ao voltar da aba do PDF (evento de foco do navegador); se o navegador não disparar o evento, basta recarregar a página.
 - [ ] Não há número de validade impresso no PDF do orçamento nem texto legal (condições, garantia); definir com o dono antes de vender.
 
+## Módulo 7 — Agenda
+- [ ] Decisão minha, reversível: abrir a OS marca o agendamento como Realizado automaticamente (o cliente apareceu). Se o dono preferir marcar à mão, é só tirar essa linha em `AgendamentoService.criarOs`.
+- [ ] Sem aviso de conflito de horário, sem duração, sem recorrência e sem lembrete ao cliente (fora de escopo, está no ROADMAP). Nada impede agendar no passado.
+- [ ] Não existe exclusão de agendamento, só cancelar (a consulta posterior depende do histórico). Confirmar com o dono.
+- [ ] Nome e telefone de clientes avulsos ficam guardados nos agendamentos para sempre (a consulta posterior os usa) e a anonimização de clientes cadastrados não os alcança. Definir prazo de guarda ou uma ferramenta de limpeza na política de privacidade (Módulo 11).
+- [ ] A grade do mês mostra até 3 agendamentos por dia e esconde o resto em "+N mais" (leva à visão do dia). Vale conferir com o dono se 3 basta.
+- [ ] A semana começa no domingo (fixo). Data e hora são locais, sem fuso: servidor e navegador precisam estar no mesmo fuso (o caso de uma oficina por VPS).
+- [ ] No tablet em pé (701 a 900 px) o mês aparece compacto, com nomes cortados; o celular (até 700 px) usa dia ou semana.
+- [ ] Os testes do calendário no frontend congelam a data (relógio falso); se o fuso da máquina de testes mudar, conferir.
+
 ## Módulo 12 — Catálogo de modelos de veículos (planejado)
 - [ ] Fonte: `gpupo/brazilian-cars` (`Resources/data/current/cars.yaml`, ~5,7 mil linhas de modelos; marca, modelo e versões como "1992 Gasolina"; licença MIT, manter o aviso). O repositório foi atualizado pela última vez em 2024-05, então carros mais novos não estão nele: por isso a tela aceita texto livre e o catálogo aprende com o que a oficina cadastra.
 - [ ] Os dados vêm originalmente da tabela FIPE. A licença MIT é do repositório, não garante o direito sobre a origem: confirmar o uso comercial antes de vender.

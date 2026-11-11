@@ -120,3 +120,38 @@ legend { color: var(--cor-suave); font-size: 0.85rem; padding: 0 0.4rem; }
 .com-acao { display: flex; gap: 0.5rem; align-items: flex-end; }
 .com-acao label { flex: 1; min-width: 0; }
 .com-acao .botao { text-decoration: none; flex: none; }
+
+/* agenda */
+.agenda-barra { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.agenda-nav { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.agenda-titulo { font-size: 1.05rem; margin: 0 0 0 0.5rem; }
+.agenda-titulo::first-letter { text-transform: uppercase; }
+.agenda-visoes { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+.botao[aria-pressed='true'] { background: var(--cor-destaque); color: var(--cor-sobre-destaque); border-color: var(--cor-destaque); }
+.botao.icone-so { width: 44px; padding: 0; }
+.mes { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-top: 1px solid var(--cor-borda); border-left: 1px solid var(--cor-borda); }
+.mes-cabecalho { padding: 0.4rem; text-align: center; font-size: 0.8rem; color: var(--cor-suave); border-right: 1px solid var(--cor-borda); border-bottom: 1px solid var(--cor-borda); text-transform: capitalize; }
+.mes-celula { min-height: 7.5rem; display: flex; flex-direction: column; gap: 0.2rem; padding: 0.25rem; border-right: 1px solid var(--cor-borda); border-bottom: 1px solid var(--cor-borda); min-width: 0; }
+.mes-celula.fora { background: var(--cor-fundo); }
+.mes-celula.fora .mes-numero { color: var(--cor-suave); }
+.mes-celula.hoje .mes-numero { background: var(--cor-destaque); color: var(--cor-sobre-destaque); }
+.mes-numero { align-self: flex-start; min-width: 44px; min-height: 44px; border: 0; border-radius: 999px; background: none; color: var(--cor-texto); font: inherit; cursor: pointer; }
+.mes-numero:hover, .semana-titulo:hover { background: var(--cor-hover); }
+.mes-celula.hoje .mes-numero:hover { background: var(--cor-destaque); }
+.chip { display: grid; gap: 0.1rem; width: 100%; min-height: 44px; padding: 0.3rem 0.5rem; text-align: left; border: 1px solid var(--cor-borda); border-left: 3px solid var(--cor-destaque);
+        border-radius: 6px; background: var(--cor-cartao); color: var(--cor-texto); font: inherit; font-size: 0.8rem; cursor: pointer; min-width: 0; }
+.chip:hover { background: var(--cor-hover); }
+.chip-titulo { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chip-detalhe { color: var(--cor-suave); font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chip-realizado { border-left-color: var(--cor-ok); }
+.chip-cancelado { border-left-color: var(--cor-suave); text-decoration: line-through; color: var(--cor-suave); }
+.chip-nao_compareceu { border-left-color: var(--cor-erro); color: var(--cor-suave); }
+.chip-mais { min-height: 44px; border: 0; background: none; color: var(--cor-suave); font: inherit; font-size: 0.8rem; cursor: pointer; text-align: left; padding: 0 0.5rem; }
+.semana { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.5rem; }
+.semana-dia { display: flex; flex-direction: column; gap: 0.35rem; padding: 0.5rem; border: 1px solid var(--cor-borda); border-radius: 8px; min-width: 0; }
+.semana-dia.hoje { border-color: var(--cor-destaque); }
+.semana-titulo { display: flex; gap: 0.4rem; align-items: baseline; min-height: 44px; border: 0; border-radius: 6px; background: none; color: var(--cor-texto); font: inherit; cursor: pointer; text-transform: capitalize; }
+.dia { display: grid; gap: 0.75rem; }
+.dia-item { display: grid; gap: 0.4rem; padding: 0.75rem; }
+@media (max-width: 900px) { .mes-celula { min-height: 5.5rem; } .chip { font-size: 0.7rem; padding: 0.2rem 0.3rem; } }
+@media (max-width: 700px) { .semana { grid-template-columns: 1fr; } }
