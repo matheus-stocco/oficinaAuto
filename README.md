@@ -6,7 +6,7 @@ o andamento em [`docs/ROTEIRO-MODULOS.md`](docs/ROTEIRO-MODULOS.md).
 
 ## Rodar localmente
 
-Precisa de Java 17+, Node 22 e um PostgreSQL.
+Precisa de Java 17+, Node 22 e um PostgreSQL. Para desenvolvimento sem HTTPS use `COOKIE_SECURE=false`.
 
 ```bash
 cp .env.example .env            # ajuste as variáveis e exporte-as no shell
@@ -17,6 +17,7 @@ cd frontend && npm install && npm run dev   # http://localhost:5173 (proxy /api 
 ## Testes
 
 ```bash
+# os testes de integração usam um banco de teste (DB_URL, DB_USER, DB_PASSWORD)
 cd backend && ./mvnw test -Dtest='com.oficina.<modulo>.*Test'
 cd frontend && npx vitest run src/<modulo>
 ```
