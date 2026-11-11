@@ -1,7 +1,7 @@
-# PROMPT MESTRE — Reconstrução do Sistema de Oficina Automotiva
+# ARQUIVO MESTRE — Sistema de Oficina Automotiva (construção do zero)
 
 > Cole este arquivo inteiro como primeira mensagem de uma sessão nova do Claude Code
-> aberta na raiz do repositório. Execute **um módulo por vez**, na ordem. Só avance
+> aberta na raiz do repositório `oficinaAuto`. Execute **um módulo por vez**, na ordem. Só avance
 > quando o critério de aceite do módulo atual passar **no ambiente online** (seção 2).
 
 ---
@@ -10,7 +10,7 @@
 
 Você é um desenvolvedor sênior full-stack. Você **não conhece este projeto**: siga este
 documento passo a passo, módulo por módulo, e não invente funcionalidade que não esteja
-aqui. Reconstrua o sistema de gestão de uma oficina mecânica de forma **simples, muito
+aqui. Construa do zero o sistema de gestão de uma oficina mecânica de forma **simples, muito
 bonita, minimalista, leve e fácil de manter**.
 
 Modelo de venda (decisão fechada, não repergunte):
@@ -29,7 +29,7 @@ Princípios (valem para toda decisão):
 2. **Simplicidade de código:** o caminho mais curto que resolve. Sem camada, interface,
    biblioteca ou configuração que este documento não peça.
 3. **Visual:** minimalista e profissional. **Proibido emoji.** Só ícones monocromáticos
-   (`lucide-react`, já instalado), sempre com o mesmo traço e tamanho.
+   (`lucide-react`), sempre com o mesmo traço e tamanho.
 4. **Leve:** nenhuma lista sem paginação; nenhum bundle desnecessário.
 5. **Responsivo de verdade:** toda tela e todo botão funcionam em **qualquer tamanho de
    tela** (celular, tablet e computador), dentro das boas práticas de usabilidade.
@@ -63,26 +63,22 @@ Consequências, que são regras:
 
 ---
 
-## 3. Estado atual (herdado, leia antes de mexer)
+## 3. Ponto de partida (repositório novo)
 
-**O que existe de fato:**
+Este repositório (`oficinaAuto`) começa **praticamente vazio** (só um README). **Não há
+código para reaproveitar:** crie `backend/` e `frontend/` no Módulo 0.
 
-- `backend/`: Spring Boot 3.2.4, Java 17, JPA + PostgreSQL + Lombok. Um único endpoint,
-  `GET /api/dashboard/stats`, com **números fixos**. Sem entidades, serviços, autenticação
-  nem testes.
-- `frontend/`: React + Vite + react-router + lucide-react, ~213 linhas. Sidebar, um
-  Dashboard e `PlaceholderPage` para todas as outras telas.
+Um protótipo antigo existiu em outro repositório e serviu só de aviso. **Não repita os
+erros dele:**
 
-**Problemas a corrigir no Módulo 0:**
-
-1. ~11.400 arquivos de `node_modules` **commitados**, mais `backend/target/`, `bin/` e
-   `src/App.java` (sobras do VS Code). Não há `.gitignore`.
-2. Senha do banco (`postgres/postgres`) fixa em `application.properties`.
-3. CORS fixo em `http://localhost:5173`, duplicado (controller e properties).
-4. `spring.jpa.hibernate.ddl-auto=update` proibido em produção; trocar por migrations.
-5. Sem login: qualquer pessoa na rede acessa tudo.
-6. README é o template do VS Code.
-7. O menu antigo (12 itens, com "Ordens de Serviço" duplicada) será substituído.
+1. `node_modules`, `target/`, `bin/` e arquivos de editor commitados no git. Crie o
+   `.gitignore` **antes do primeiro commit de código**.
+2. Senha do banco e outros segredos fixos em arquivo de configuração.
+3. CORS fixo em `localhost`, duplicado em dois lugares.
+4. `spring.jpa.hibernate.ddl-auto=update`: proibido; use migrations.
+5. Sistema sem login.
+6. Números fixos no dashboard, no lugar de dados reais.
+7. Item de menu duplicado ("Ordens de Serviço" aparecia duas vezes).
 
 ---
 
@@ -169,7 +165,7 @@ relatórios. Não duplique a fórmula.
 
 ## 6. Regras técnicas
 
-- **Stack mantida:** Spring Boot 3, Java 17, PostgreSQL, React + Vite + react-router +
+- **Stack definida:** Spring Boot 3, Java 17, PostgreSQL, React + Vite + react-router +
   `lucide-react`. Não troque de framework.
 - **Banco:** Flyway (`backend/src/main/resources/db/migration`), `ddl-auto=validate`.
   Dinheiro em `NUMERIC(12,2)`/`BigDecimal`, nunca `double`.
@@ -290,22 +286,26 @@ A oficina é a **controladora**; o sistema trata dados pessoais mínimos.
 Cada módulo: **Entrega** e **Critério de aceite**. Não avance com teste vermelho nem com
 o módulo quebrado no ambiente online. Ao concluir, siga a seção 8.
 
-### Módulo 0 — Limpeza, base e deploy
+### Módulo 0 — Base do projeto e deploy
 **Entrega:**
-- `.gitignore` (node_modules, target, bin, .env, dist, uploads).
-- `git rm -r --cached` de `frontend/node_modules`, `backend/target`, `bin`; apagar
-  `src/App.java`; README real (o que é, como subir, como é o deploy).
-- Segredos para variáveis de ambiente; `.env.example`; remover o CORS duplicado.
-- Flyway e `ddl-auto=validate`; estrutura de pacotes por módulo.
+- **`.gitignore` primeiro** (node_modules, target, bin, .env, dist, uploads, arquivos de
+  editor), antes de qualquer outro commit.
+- Criar `backend/`: Spring Boot 3.2.x, Java 17, Maven, JPA, PostgreSQL, Flyway, Lombok,
+  Bean Validation. `ddl-auto=validate`. Pacotes por módulo (`com.oficina.<modulo>`).
+- Criar `frontend/`: React + Vite + react-router + `lucide-react`, com o CSS por tokens
+  que o Módulo 2 vai completar.
+- Segredos só por variáveis de ambiente; `.env.example`; CORS por variável (só dev).
 - Dockerfiles, `docker-compose.yml`, `GET /api/saude` e orientação ao humano para
   configurar o app no Dokploy (repositório, variáveis, domínio, healthcheck).
 - Configurar a base de testes: JUnit no backend e **Vitest** no frontend, cada um com
   um teste de exemplo passando.
+- README real (o que é, como subir, como é o deploy).
 - Criar `docs/ROTEIRO-MODULOS.md` com os módulos 0 a 12 como `PENDENTE`, e
   `docs/ROADMAP.md`. Registrar a estrutura inicial no Graphify.
 
-**Aceite:** `git ls-files | wc -l` abaixo de ~100; um push publica a aplicação no
-Dokploy e `/api/saude` responde `ok` no domínio; nenhum segredo no git.
+**Aceite:** `git ls-files` sem nenhum `node_modules`, `target` ou `.env`; backend e
+frontend sobem com `docker compose up`; um push publica a aplicação no Dokploy e
+`/api/saude` responde `ok` no domínio; nenhum segredo no git; os testes de exemplo passam.
 
 ### Módulo 1 — Acesso e funcionários
 **Entrega:** login e logout; troca de senha; cadastro de funcionários (nome, telefone,
